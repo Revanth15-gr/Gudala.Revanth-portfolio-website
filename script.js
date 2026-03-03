@@ -64,9 +64,9 @@ const dataLabelPlugin = {
     id: 'dataLabelPlugin',
     afterDatasetsDraw(chart) {
         const { ctx } = chart;
-        ctx.font = 'bold 14px Poppins';
-        ctx.fillStyle = '#fff';
-        ctx.textAlign = 'center';
+        ctx.font = 'bold 16px Poppins';
+        ctx.fillStyle = '#0ef';
+        ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
         
         chart.data.datasets.forEach((dataset, datasetIndex) => {
@@ -75,7 +75,8 @@ const dataLabelPlugin = {
                 const value = dataset.data[index];
                 if (value !== null && value !== undefined) {
                     const { x, y, width } = bar.getProps(['x', 'y', 'width']);
-                    ctx.fillText(value + '%', x - width/2 + width/2, y - 5);
+                    // Draw percentage text to the right of the bar
+                    ctx.fillText(value + '%', x + 15, y);
                 }
             });
         });
