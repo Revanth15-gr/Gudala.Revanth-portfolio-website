@@ -106,20 +106,15 @@ new Chart(pythonCtx, {
                 beginAtZero: true,
                 max: 100,
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12, weight: 'bold' },
-                    callback: function(value) {
-                        return value + '%';
-                    }
+                    display: false
                 },
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)'
+                    display: false
                 }
             },
             y: {
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12 }
+                    display: false
                 },
                 grid: {
                     display: false
@@ -158,20 +153,15 @@ new Chart(jsCtx, {
                 beginAtZero: true,
                 max: 100,
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12, weight: 'bold' },
-                    callback: function(value) {
-                        return value + '%';
-                    }
+                    display: false
                 },
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)'
+                    display: false
                 }
             },
             y: {
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12 }
+                    display: false
                 },
                 grid: {
                     display: false
@@ -210,20 +200,15 @@ new Chart(htmlcssCtx, {
                 beginAtZero: true,
                 max: 100,
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12, weight: 'bold' },
-                    callback: function(value) {
-                        return value + '%';
-                    }
+                    display: false
                 },
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)'
+                    display: false
                 }
             },
             y: {
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12 }
+                    display: false
                 },
                 grid: {
                     display: false
@@ -262,20 +247,15 @@ new Chart(reactCtx, {
                 beginAtZero: true,
                 max: 100,
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12, weight: 'bold' },
-                    callback: function(value) {
-                        return value + '%';
-                    }
+                    display: false
                 },
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)'
+                    display: false
                 }
             },
             y: {
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12 }
+                    display: false
                 },
                 grid: {
                     display: false
@@ -314,20 +294,15 @@ new Chart(nodejsCtx, {
                 beginAtZero: true,
                 max: 100,
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12, weight: 'bold' },
-                    callback: function(value) {
-                        return value + '%';
-                    }
+                    display: false
                 },
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)'
+                    display: false
                 }
             },
             y: {
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12 }
+                    display: false
                 },
                 grid: {
                     display: false
@@ -366,20 +341,15 @@ new Chart(expressCtx, {
                 beginAtZero: true,
                 max: 100,
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12, weight: 'bold' },
-                    callback: function(value) {
-                        return value + '%';
-                    }
+                    display: false
                 },
                 grid: {
-                    color: 'rgba(255, 255, 255, 0.1)'
+                    display: false
                 }
             },
             y: {
                 ticks: {
-                    color: '#fff',
-                    font: { size: 12 }
+                    display: false
                 },
                 grid: {
                     display: false
