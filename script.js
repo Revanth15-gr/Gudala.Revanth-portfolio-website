@@ -59,6 +59,29 @@ const typed = new Typed('.multiple-text', {
 // Chart.js Configuration for Bar Charts
 Chart.defaults.font.family = "'Poppins', sans-serif";
 
+// Plugin to display data labels on bars
+const dataLabelPlugin = {
+    id: 'dataLabelPlugin',
+    afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        ctx.font = 'bold 14px Poppins';
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        chart.data.datasets.forEach((dataset, datasetIndex) => {
+            const meta = chart.getDatasetMeta(datasetIndex);
+            meta.data.forEach((bar, index) => {
+                const value = dataset.data[index];
+                if (value !== null && value !== undefined) {
+                    const { x, y, width } = bar.getProps(['x', 'y', 'width']);
+                    ctx.fillText(value + '%', x - width/2 + width/2, y - 5);
+                }
+            });
+        });
+    }
+};
+
 // Python Bar Chart
 const pythonCtx = document.getElementById('pythonChart').getContext('2d');
 new Chart(pythonCtx, {
@@ -66,7 +89,6 @@ new Chart(pythonCtx, {
     data: {
         labels: ['Python'],
         datasets: [{
-            label: 'Proficiency',
             data: [72],
             backgroundColor: ['#0ef'],
             borderColor: ['#0ef'],
@@ -106,16 +128,10 @@ new Chart(pythonCtx, {
         plugins: {
             legend: {
                 display: false
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.parsed.x + '%';
-                    }
-                }
             }
         }
-    }
+    },
+    plugins: [dataLabelPlugin]
 });
 
 // JavaScript Bar Chart
@@ -125,7 +141,6 @@ new Chart(jsCtx, {
     data: {
         labels: ['JavaScript'],
         datasets: [{
-            label: 'Proficiency',
             data: [75],
             backgroundColor: ['#ffd93d'],
             borderColor: ['#ffd93d'],
@@ -165,16 +180,10 @@ new Chart(jsCtx, {
         plugins: {
             legend: {
                 display: false
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.parsed.x + '%';
-                    }
-                }
             }
         }
-    }
+    },
+    plugins: [dataLabelPlugin]
 });
 
 // HTML & CSS Bar Chart
@@ -184,7 +193,6 @@ new Chart(htmlcssCtx, {
     data: {
         labels: ['HTML & CSS'],
         datasets: [{
-            label: 'Proficiency',
             data: [70],
             backgroundColor: ['#51cf66'],
             borderColor: ['#51cf66'],
@@ -224,16 +232,10 @@ new Chart(htmlcssCtx, {
         plugins: {
             legend: {
                 display: false
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.parsed.x + '%';
-                    }
-                }
             }
         }
-    }
+    },
+    plugins: [dataLabelPlugin]
 });
 
 // React Bar Chart
@@ -243,7 +245,6 @@ new Chart(reactCtx, {
     data: {
         labels: ['React'],
         datasets: [{
-            label: 'Proficiency',
             data: [68],
             backgroundColor: ['#4ecdc4'],
             borderColor: ['#4ecdc4'],
@@ -283,29 +284,22 @@ new Chart(reactCtx, {
         plugins: {
             legend: {
                 display: false
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.parsed.x + '%';
-                    }
-                }
             }
         }
-    }
+    },
+    plugins: [dataLabelPlugin]
 });
 
-// Web Development Bar Chart
-const webdevCtx = document.getElementById('webdevChart').getContext('2d');
-new Chart(webdevCtx, {
+// Node.js Bar Chart
+const nodejsCtx = document.getElementById('nodejsChart').getContext('2d');
+new Chart(nodejsCtx, {
     type: 'bar',
     data: {
-        labels: ['Web Development'],
+        labels: ['Node.js'],
         datasets: [{
-            label: 'Proficiency',
-            data: [73],
-            backgroundColor: ['#ff6b6b'],
-            borderColor: ['#ff6b6b'],
+            data: [70],
+            backgroundColor: ['#90ee90'],
+            borderColor: ['#90ee90'],
             borderWidth: 2,
             borderRadius: 5
         }]
@@ -342,29 +336,22 @@ new Chart(webdevCtx, {
         plugins: {
             legend: {
                 display: false
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.parsed.x + '%';
-                    }
-                }
             }
         }
-    }
+    },
+    plugins: [dataLabelPlugin]
 });
 
-// UI/UX Design Bar Chart
-const designCtx = document.getElementById('designChart').getContext('2d');
-new Chart(designCtx, {
+// Express Bar Chart
+const expressCtx = document.getElementById('expressChart').getContext('2d');
+new Chart(expressCtx, {
     type: 'bar',
     data: {
-        labels: ['UI/UX Design'],
+        labels: ['Express'],
         datasets: [{
-            label: 'Proficiency',
-            data: [65],
-            backgroundColor: ['#a78bfa'],
-            borderColor: ['#a78bfa'],
+            data: [67],
+            backgroundColor: ['#ff9999'],
+            borderColor: ['#ff9999'],
             borderWidth: 2,
             borderRadius: 5
         }]
@@ -401,16 +388,10 @@ new Chart(designCtx, {
         plugins: {
             legend: {
                 display: false
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.parsed.x + '%';
-                    }
-                }
             }
         }
-    }
+    },
+    plugins: [dataLabelPlugin]
 });
 
 ScrollReveal().reveal('.skill-item', { origin: 'bottom', interval: 100 });
