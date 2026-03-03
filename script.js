@@ -177,6 +177,53 @@ new Chart(jsCtx, {
     plugins: [dataLabelPlugin]
 });
 
+// Java Bar Chart
+const javaCtx = document.getElementById('javaChart').getContext('2d');
+new Chart(javaCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Java'],
+        datasets: [{
+            data: [71],
+            backgroundColor: ['#f39c12'],
+            borderColor: ['#f39c12'],
+            borderWidth: 2,
+            borderRadius: 5
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    display: false
+                },
+                grid: {
+                    display: false
+                }
+            },
+            y: {
+                ticks: {
+                    display: false
+                },
+                grid: {
+                    display: false
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    },
+    plugins: [dataLabelPlugin]
+});
+
 // HTML & CSS Bar Chart
 const htmlcssCtx = document.getElementById('htmlcssChart').getContext('2d');
 new Chart(htmlcssCtx, {
