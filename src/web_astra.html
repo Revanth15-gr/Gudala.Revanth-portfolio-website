@@ -1,0 +1,4653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Business & Service Finder Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            margin: 50;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body:not(.login-page) {
+            background: linear-gradient(135deg, #b735ef, #11d4ca);
+            min-height: 100vh;
+            margin: 50;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body:not(.login-page) .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        body:not(.login-page) .bg-pattern {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, 
+                rgba(147, 112, 219, 0.1) 0%,
+                rgba(230, 230, 250, 0.05) 25%,
+                rgba(147, 112, 219, 0.1) 50%);
+            animation: patternShift 20s linear infinite;
+        }
+
+        body:not(.login-page) .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        body:not(.login-page) .floating-shapes::before,
+        body:not(.login-page) .floating-shapes::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, 
+                rgba(147, 112, 219, 0.2),
+                rgba(230, 230, 250, 0.1));
+            animation: float 8s infinite ease-in-out;
+        }
+
+        body:not(.login-page) .floating-shapes::before {
+            top: 20%;
+            left: 20%;
+            animation-delay: -2s;
+        }
+
+        body:not(.login-page) .floating-shapes::after {
+            bottom: 20%;
+            right: 20%;
+            animation-delay: -4s;
+        }
+
+        /* Update container styles for non-login pages */
+        body:not(.login-page) .container,
+        body:not(.login-page) .card,
+        body:not(.login-page) .search-box {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(147, 112, 219, 0.2);
+            box-shadow: 0 8px 32px rgba(147, 112, 219, 0.1);
+        }
+
+        body:not(.login-page) .button,
+        body:not(.login-page) .nav-item:hover,
+        body:not(.login-page) .dropdown-item:hover {
+            background: linear-gradient(135deg, rgba(147, 112, 219, 0.2), rgba(230, 230, 250, 0.3));
+        }
+
+        @keyframes patternShift {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Container styles */
+        .container, .portal-container {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        }
+
+        .requirement-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .requirement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
+        }
+
+        /* Header styles */
+        .portal-header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Search box styles */
+        .search-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .search-box:focus {
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Category pills */
+        .category-pill {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .category-pill:hover, .category-pill.active {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-color: transparent;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Modal styles */
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Button styles */
+        .contact-btn, .booking-submit, .reset-search-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover, .booking-submit:hover, .reset-search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .requirement-card {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            z-index: 100;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 100%);
+            z-index: -1;
+        }
+
+        .tabs {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 2rem;
+            background: transparent;
+            border: none;
+            color: #2c3e50;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #3498db;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: #3498db;
+        }
+
+        .tab-btn.active::after {
+            transform: scaleX(1);
+        }
+
+        .form-container {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .form {
+            display: none;
+            width: 100%;
+        }
+
+        .form.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(52, 152, 219, 0.1);
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+        }
+
+        .input-group input::placeholder {
+            color: #95a5a6;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Add a background overlay for the login page */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(41, 128, 185, 0.1));
+            backdrop-filter: blur(5px);
+            z-index: 50;
+        }
+
+        .portal-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f5f6fa;
+            overflow-y: auto;
+        }
+
+        .portal-header {
+            background: linear-gradient(rgba(52, 152, 219, 0.9), rgba(52, 152, 219, 0.9)), 
+                        url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1600') center/cover;
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .portal-header .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .portal-header .logo-section:hover {
+            opacity: 0.9;
+        }
+
+        .portal-header .logo-icon {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .portal-header h1 {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .portal-nav {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .portal-nav button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 0.5rem 1rem;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .portal-nav button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .portal-main {
+            margin-top: 70px;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .filters {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            margin-bottom: 1rem;
+        }
+
+        .filter-group h3 {
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .business-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .business-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .business-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .business-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .business-info {
+            padding: 1rem;
+        }
+
+        .business-info h3 {
+            margin: 0 0 0.5rem 0;
+            color: #2c3e50;
+        }
+
+        .business-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating {
+            color: #f1c40f;
+        }
+
+        .business-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .business-actions button {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .contact-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .bookmark-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            display: none;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 1rem;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .chat-header .business-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-header .business-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-header .business-avatar i {
+            color: #3498db;
+            font-size: 1.2rem;
+        }
+
+        .chat-messages {
+            height: calc(100% - 130px);
+            padding: 1rem;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message.user-message {
+            margin-left: auto;
+        }
+
+        .message.ai-message {
+            margin-right: auto;
+        }
+
+        .message-content {
+            padding: 0.8rem 1rem;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .user-message .message-content {
+            background: #3498db;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .ai-message .message-content {
+            background: white;
+            color: #2c3e50;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #95a5a6;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            position: relative;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #eee;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .chat-input button {
+            padding: 0.8rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .chat-input button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .chat-input button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 0.5rem 1rem;
+            background: white;
+            border-radius: 15px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .typing-indicator i {
+            margin-left: 0.5rem;
+            animation: bounce 0.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .forum-container {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .forum-post {
+            border-bottom: 1px solid #ddd;
+            padding: 1rem 0;
+        }
+
+        .forum-post:last-child {
+            border-bottom: none;
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-author {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .post-date {
+            color: #7f8c8d;
+        }
+
+        .post-content {
+            margin-bottom: 1rem;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .post-actions button {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+        }
+
+        .post-actions button:hover {
+            color: #2c3e50;
+        }
+
+        /* Add new styles for booking modal and enhanced business cards */
+        .business-location {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .business-services {
+            margin: 0.5rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .service-tag {
+            background: #f0f2f5;
+            padding: 0.2rem 0.5rem;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #2c3e50;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #7f8c8d;
+        }
+
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .booking-form input,
+        .booking-form textarea,
+        .booking-form select {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .booking-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .booking-submit {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .booking-submit:hover {
+            background: #27ae60;
+        }
+
+        .business-hours {
+            margin: 0.5rem 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .price-range {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        /* Add new search bar in content area */
+        .location-search-bar {
+            width: 100%;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .location-search-bar input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .location-search-bar input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .highlight {
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 4px;
+            padding: 2px 4px;
+        }
+
+        .map-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #3498db;
+        }
+
+        .map-loading i {
+            font-size: 3rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .map-error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #e74c3c;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 5px;
+            max-width: 80%;
+        }
+
+        /* Add new home page styles */
+        .home-container {
+            min-height: 100vh;
+            background: linear-gradient(to right, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        .hero-section {
+            text-align: center;
+            color: #2c3e50;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                rgba(236, 240, 245, 0.5) 0%,
+                rgba(255, 255, 255, 0.5) 100%);
+            z-index: 1;
+        }
+
+        .hero-section > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+            color: #2c3e50;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s;
+            color: #34495e;
+        }
+
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            font-size: 1.2rem;
+            border: 2px solid #eee;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            background: white;
+            color: #2c3e50;
+        }
+
+        .search-box:focus {
+            border-color: #3498db;
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.2);
+            transform: scale(1.02);
+            outline: none;
+        }
+
+        .category-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .category-pill {
+            background: white;
+            color: #2c3e50;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #eee;
+            font-weight: 500;
+        }
+
+        .category-pill:hover,
+        .category-pill.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+            animation: fadeIn 1s ease;
+        }
+
+        .requirement-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #eee;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .requirement-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+
+        .requirement-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        .requirement-card p {
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            color: #34495e;
+        }
+
+        .service-tag {
+            background: #f8f9fa;
+            color: #2c3e50;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 0.25rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+
+        .service-tag:hover {
+            background: #3498db;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        .loading-spinner i {
+            font-size: 3rem;
+            color: #3498db;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Update navigation menu styles */
+        .nav-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .nav-toggle {
+            background: white;
+            border: 2px solid #eee;
+            padding: 1.2rem;
+            border-radius: 50%;
+            color: #2c3e50;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-toggle:hover {
+            background: #3498db;
+            color: white;
+            transform: rotate(180deg);
+        }
+
+        .nav-menu-items {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+            animation: slideIn 0.3s ease;
+            min-width: 200px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #eee;
+        }
+
+        .nav-menu-items button {
+            display: block;
+            width: 100%;
+            padding: 1rem 1.5rem;
+            margin: 0.5rem 0;
+            border: none;
+            background: white;
+            color: #2c3e50;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .nav-menu-items button:hover {
+            background: #f8f9fa;
+            color: #3498db;
+            transform: translateX(5px);
+        }
+
+        /* Add styles for product items */
+        .featured-products {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .product-item {
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            transform: translateX(5px);
+            border-color: #3498db !important;
+        }
+
+        .requirement-card {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .business-meta {
+            flex-wrap: wrap;
+        }
+
+        .price-tag {
+            background: #27ae60;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .availability {
+            background: #3498db;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            display: none;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 1rem;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .chat-header .business-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chat-header .business-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-header .business-avatar i {
+            color: #3498db;
+            font-size: 1.2rem;
+        }
+
+        .chat-messages {
+            height: calc(100% - 130px);
+            padding: 1rem;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message.user-message {
+            margin-left: auto;
+        }
+
+        .message.ai-message {
+            margin-right: auto;
+        }
+
+        .message-content {
+            padding: 0.8rem 1rem;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            position: relative;
+        }
+
+        .user-message .message-content {
+            background: #3498db;
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .ai-message .message-content {
+            background: white;
+            color: #2c3e50;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #95a5a6;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            position: relative;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #eee;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .chat-input button {
+            padding: 0.8rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .chat-input button:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .chat-input button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 0.5rem 1rem;
+            background: white;
+            border-radius: 15px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .typing-indicator i {
+            margin-left: 0.5rem;
+            animation: bounce 0.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-container.expanded {
+            width: 500px !important;
+            height: 600px !important;
+        }
+
+        .chat-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-controls button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .chat-controls button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input button {
+            opacity: 0.6;
+            transform: scale(0.95);
+            transition: all 0.3s ease;
+        }
+
+        .chat-input button.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .message {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: messageSlideIn 0.3s ease forwards;
+        }
+
+        @keyframes messageSlideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #3498db;
+            border-radius: 50%;
+            animation: typingBounce 1s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+
+        /* Add new styles for enhanced search results */
+        .requirement-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+            cursor: pointer;
+        }
+
+        .requirement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .discount-badge {
+            background: #27ae60;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .rating-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .stars {
+            color: #f1c40f;
+            font-size: 1.2rem;
+        }
+
+        .rating-number {
+            color: #2c3e50;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+
+        .reviews-count {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .featured-products {
+            margin: 1.5rem 0;
+        }
+
+        .featured-products h4 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .product-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+
+        .product-discount {
+            margin-top: 0.5rem;
+            color: #27ae60;
+            font-size: 0.9rem;
+        }
+
+        .stock {
+            padding: 0.2rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .stock.available {
+            background: #27ae60;
+            color: white;
+        }
+
+        .stock.limited {
+            background: #f1c40f;
+            color: white;
+        }
+
+        .service-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .response-time {
+            color: #27ae60;
+            font-size: 0.9rem;
+        }
+
+        .contact-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .reset-search-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .reset-search-btn:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .highlight {
+            background: rgba(52, 152, 219, 0.1);
+            color: #2980b9;
+            padding: 0.1rem 0.3rem;
+            border-radius: 3px;
+        }
+
+        .language-selector {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+
+        .language-selector select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+
+        .product-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .product-modal .modal-content {
+            position: relative;
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            border-radius: 15px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .product-details {
+            padding: 20px;
+        }
+
+        .product-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            margin-top: 20px;
+        }
+
+        .product-info h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .product-info p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .product-specs {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .product-specs h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .related-products {
+            margin-top: 30px;
+        }
+
+        .related-products h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .related-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .related-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .related-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .dropdown {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .dropdown-toggle {
+            background: linear-gradient(135deg, #4a90e2, #2c5282);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-toggle:hover {
+            background: linear-gradient(135deg, #357abd, #1a365d);
+            transform: translateY(-2px);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 8px 0;
+            min-width: 200px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #333;
+            text-decoration: none;
+            transition: background 0.2s;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background: #f8f9fa;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #e9ecef;
+            margin: 8px 0;
+        }
+
+        .language-selector {
+            padding: 10px 20px;
+        }
+
+        .language-selector select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Add styles for filter actions */
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            margin-top: auto;
+        }
+
+        .apply-filters-btn, .reset-filters-btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .apply-filters-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .apply-filters-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .reset-filters-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .reset-filters-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .filters-container {
+            align-items: flex-start;
+        }
+
+        .filter-group {
+            margin-bottom: 0;
+        }
+
+        body.login-page {
+            min-height: 100vh;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f8f6ff 0%, #e8e3f7 100%);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        .login-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        body.login-page .container {
+            width: 450px;
+            min-height: 550px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 40px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(147, 112, 219, 0.3);
+            box-shadow: 0 8px 32px rgba(147, 112, 219, 0.2);
+            border-radius: 25px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ensure the container remains centered and visible on all screen sizes */
+        @media screen and (max-height: 600px) {
+            body.login-page .container {
+                margin: 20px auto;
+                min-height: auto;
+            }
+            
+            .login-wrapper {
+                position: relative;
+                min-height: 100vh;
+                padding: 20px 0;
+            }
+        }
+
+        body.login-page .tabs {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 35px;
+            background: rgba(147, 112, 219, 0.1);
+            padding: 12px;
+            border-radius: 15px;
+        }
+
+        body.login-page .tab-btn {
+            background: none;
+            border: none;
+            color: #6b4c9a;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 10px 20px;
+            opacity: 0.6;
+            transition: 0.3s;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        body.login-page .tab-btn.active {
+            opacity: 1;
+            background: rgba(147, 112, 219, 0.2);
+            color: #4a3069;
+        }
+
+        body.login-page .input-group {
+            width: 100%;
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body.login-page .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(147, 112, 219, 0.3);
+            outline: none;
+            border-radius: 12px;
+            color: #4a3069;
+            font-size: 16px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        body.login-page .input-group input:focus {
+            border-color: rgba(147, 112, 219, 0.8);
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px rgba(147, 112, 219, 0.2);
+        }
+
+        body.login-page .input-group input::placeholder {
+            color: rgba(147, 112, 219, 0.6);
+            text-align: center;
+        }
+
+        body.login-page .submit-btn {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #9370DB, #8A2BE2);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(147, 112, 219, 0.2);
+        }
+
+        body.login-page .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(147, 112, 219, 0.3);
+            background: linear-gradient(135deg, #9b7fe3, #9334f0);
+        }
+
+        body.login-page .error {
+            color: #ff4757;
+            font-size: 14px;
+            margin-top: 5px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 5px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Review Dropdown Styles */
+        .review-section {
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .review-btn {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+        }
+
+        .review-btn:hover {
+            background: #e9ecef;
+        }
+
+        .review-dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 15px;
+            z-index: 1000;
+            margin-top: 5px;
+            border: 1px solid #e9ecef;
+        }
+
+        .review-dropdown-content.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .rating-summary {
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .overall-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .rating-number {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stars {
+            color: #f1c40f;
+        }
+
+        .total-reviews {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .rating-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 8px;
+            background: #f1f3f5;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            background: #3498db;
+            border-radius: 4px;
+        }
+
+        .recent-reviews {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .recent-reviews h4 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .review-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .reviewer {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .review-item p {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Review Filter Styles */
+        .review-filters {
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .filter-header h4 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .reset-filter-btn {
+            background: none;
+            border: none;
+            color: #3498db;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-filter-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .filter-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            background: white;
+            color: #2c3e50;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:hover {
+            border-color: #3498db;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .search-reviews {
+            position: relative;
+        }
+
+        .review-search {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .review-search:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .reviews-count {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .review-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .review-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .review-list::-webkit-scrollbar-track {
+            background: #f1f3f5;
+            border-radius: 3px;
+        }
+
+        .review-list::-webkit-scrollbar-thumb {
+            background: #cbd3da;
+            border-radius: 3px;
+        }
+
+        .review-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .review-date {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        .verified-badge {
+            color: #27ae60;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .review-photos {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .review-photos img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .review-photos img:hover {
+            transform: scale(1.05);
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .review-actions button {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .review-actions button:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .review-actions button.active {
+            color: #3498db;
+        }
+
+        .review-actions button.reported {
+            color: #27ae60;
+        }
+
+        .review-actions button.reported:hover {
+            background: none;
+            cursor: default;
+        }
+
+        /* Forum Styles */
+        .forum-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .forum-tabs {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .forum-tab {
+            background: none;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #7f8c8d;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .forum-tab:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .forum-tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .forum-tab-content {
+            display: none;
+        }
+
+        .forum-tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Review Form Styles */
+        .review-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .rating-input i {
+            cursor: pointer;
+            color: #bdc3c7;
+            transition: all 0.2s ease;
+        }
+
+        .rating-input i:hover,
+        .rating-input i.fas {
+            color: #f1c40f;
+        }
+
+        .photo-upload {
+            border: 2px dashed #e9ecef;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-upload:hover {
+            border-color: #3498db;
+        }
+
+        .upload-preview {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .upload-preview img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .cancel-btn,
+        .submit-btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            color: #7f8c8d;
+        }
+
+        .cancel-btn:hover {
+            background: #e9ecef;
+        }
+
+        .submit-btn {
+            background: #3498db;
+            border: none;
+            color: white;
+            flex: 1;
+        }
+
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Community Reviews Styles */
+        .community-reviews {
+            margin-top: 2rem;
+        }
+
+        .reviews-filter {
+            margin-bottom: 1.5rem;
+        }
+
+        .reviews-filter select {
+            padding: 0.8rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            width: 200px;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+
+        .community-review-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .community-review-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .reviewer-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .review-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .review-title {
+            color: #2c3e50;
+            margin-bottom: 0.8rem;
+        }
+
+        .review-text {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .review-photos {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .review-photos img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .review-photos img:hover {
+            transform: scale(1.05);
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .review-actions button {
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .review-actions button:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .review-actions button.active {
+            color: #3498db;
+        }
+
+        .review-actions button.reported {
+            color: #27ae60;
+        }
+
+        .add-review-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .add-review-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-background">
+        <div class="bg-pattern"></div>
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+    </div>
+    
+    <!-- Update the home container structure -->
+    <div class="home-container" id="homeContainer">
+        <div class="nav-menu">
+            <button class="nav-toggle" onclick="toggleNavMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-menu-items" id="navMenuItems">
+                <div class="language-selector">
+                    <select onchange="changeLanguage(this.value)">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="de">Deutsch</option>
+                        <option value="zh">中文</option>
+                        <option value="hi">हिंदी</option>
+                    </select>
+                </div>
+                <button onclick="showSection('home')" data-translate="home">
+                    <i class="fas fa-home"></i> Home
+                </button>
+                <button onclick="showSection('search')" data-translate="search">
+                    <i class="fas fa-search"></i> Search
+                </button>
+                <button id="loginButton" onclick="showSection('login')" data-translate="login">
+                    <i class="fas fa-sign-in-alt"></i> Login/Register
+                </button>
+            </div>
+        </div>
+
+        <div class="hero-section">
+            <h1 class="hero-title">Find Local Businesses & Services</h1>
+            <p class="hero-subtitle">Discover and connect with the best local providers in your area</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" 
+                   class="search-box" 
+                   placeholder="Search for services (e.g., plumbing, farming, retail)..." 
+                   oninput="searchRequirements(this.value)">
+            
+            <div class="category-pills">
+                <button class="category-pill" onclick="filterByCategory('all')">All Categories</button>
+                <button class="category-pill" onclick="filterByCategory('services')">Services</button>
+                <button class="category-pill" onclick="filterByCategory('retail')">Retail</button>
+                <button class="category-pill" onclick="filterByCategory('food')">Food & Dining</button>
+                <button class="category-pill" onclick="filterByCategory('agriculture')">Agriculture</button>
+            </div>
+
+            <div class="requirements-grid" id="requirementsGrid">
+                <!-- Requirements will be dynamically added here -->
+            </div>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <i class="fas fa-spinner"></i>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+        
+        <div class="form-container">
+            <form id="login-form" class="form active" onsubmit="return validateLogin(event)">
+                <div class="input-group">
+                    <input type="email" placeholder="Email" required>
+                    <div class="error">Please enter a valid email</div>
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Password" required>
+                    <div class="error">Password must be at least 6 characters</div>
+                </div>
+                <button type="submit" class="submit-btn">Login</button>
+            </form>
+
+            <form id="signup-form" class="form" onsubmit="return validateSignup(event)">
+                <div class="input-group">
+                    <input type="text" placeholder="Full Name" required>
+                    <div class="error">Please enter your full name</div>
+                </div>
+                <div class="input-group">
+                    <input type="email" placeholder="Email" required>
+                    <div class="error">Please enter a valid email</div>
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Password" required>
+                    <div class="error">Password must be at least 6 characters</div>
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Confirm Password" required>
+                    <div class="error">Passwords do not match</div>
+                </div>
+                <button type="submit" class="submit-btn">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="portal-container" id="portalContainer">
+        <header class="portal-header">
+            <a href="#" class="logo-section" onclick="showSection('home')">
+                <i class="fas fa-city logo-icon"></i>
+                <h1>Local Business & Service Finder</h1>
+            </a>
+            <nav class="portal-nav">
+                <button onclick="showSection('home')"><i class="fas fa-home"></i> Home</button>
+                <button onclick="toggleView('grid')"><i class="fas fa-th-large"></i> Grid View</button>
+                <button onclick="toggleChat()"><i class="fas fa-comments"></i> Messages</button>
+                <button onclick="showForum()"><i class="fas fa-users"></i> Community</button>
+                <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </nav>
+        </header>
+
+        <main class="portal-main">
+            <aside class="filters">
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="categoryFilter">Category</label>
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="home-services">Home Services</option>
+                            <option value="education">Education</option>
+                            <option value="food-catering">Food & Catering</option>
+                            <option value="health-wellness">Health & Wellness</option>
+                            <option value="professional">Professional Services</option>
+                            <option value="beauty-spa">Beauty & Spa</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="ratingFilter">Rating</label>
+                        <select id="ratingFilter">
+                            <option value="all">All Ratings</option>
+                            <option value="4.5">4.5+ Stars</option>
+                            <option value="4">4+ Stars</option>
+                            <option value="3.5">3.5+ Stars</option>
+                            <option value="3">3+ Stars</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="priceFilter">Price Range</label>
+                        <select id="priceFilter">
+                            <option value="all">All Prices</option>
+                            <option value="$">$ (Budget)</option>
+                            <option value="$$">$$ (Moderate)</option>
+                            <option value="$$$">$$$ (Premium)</option>
+                            <option value="$$$$">$$$$ (Luxury)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="locationFilter">Location</label>
+                        <select id="locationFilter">
+                            <option value="all">All Locations</option>
+                            <option value="downtown">Downtown</option>
+                            <option value="north">North</option>
+                            <option value="south">South</option>
+                            <option value="east">East</option>
+                            <option value="west">West</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button onclick="applyFilters()" class="apply-filters-btn">
+                            <i class="fas fa-filter"></i> Apply Filters
+                        </button>
+                        <button onclick="resetFilters()" class="reset-filters-btn">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="content">
+                <div class="location-search-bar">
+                    <input type="text" 
+                           placeholder="Search businesses by name, service, or location..." 
+                           onkeyup="searchBusinesses(this.value)">
+                </div>
+
+                <div class="business-grid">
+                    <!-- Business cards will be dynamically added here -->
+                </div>
+
+                <div class="forum-container" style="display: none;">
+                    <div class="forum-header">
+                        <h2>Community Forum</h2>
+                        <div class="forum-tabs">
+                            <button class="forum-tab active" onclick="switchForumTab('discussions')">
+                                <i class="fas fa-comments"></i> Discussions
+                            </button>
+                            <button class="forum-tab" onclick="switchForumTab('reviews')">
+                                <i class="fas fa-star"></i> Product Reviews
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="forum-content">
+                        <!-- Discussions Tab -->
+                        <div id="discussionsTab" class="forum-tab-content active">
+                            <div class="create-post">
+                                <button onclick="toggleCreatePost()">
+                                    <i class="fas fa-plus"></i> Start a Discussion
+                                </button>
+                            </div>
+                            <div class="forum-posts">
+                                <!-- Forum posts will be dynamically added here -->
+                            </div>
+                        </div>
+
+                        <!-- Reviews Tab -->
+                        <div id="reviewsTab" class="forum-tab-content">
+                            <div class="reviews-header">
+                                <h3>Product Reviews</h3>
+                                <button onclick="toggleReviewForm()" class="add-review-btn">
+                                    <i class="fas fa-plus"></i> Write a Review
+                                </button>
+                            </div>
+
+                            <!-- Review Form -->
+                            <div id="reviewForm" class="review-form" style="display: none;">
+                                <h4>Write Your Review</h4>
+                                <form onsubmit="submitReview(event)">
+                                    <div class="form-group">
+                                        <label>Select Product/Service</label>
+                                        <select id="reviewProduct" required>
+                                            <option value="">Choose a product or service...</option>
+                                            <option value="plumbing">Emergency Plumbing</option>
+                                            <option value="electrical">Electrical Repair</option>
+                                            <option value="cleaning">Home Cleaning</option>
+                                            <!-- More options will be dynamically added -->
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Your Rating</label>
+                                        <div class="rating-input">
+                                            <i class="far fa-star" data-rating="1" onclick="setRating(1)"></i>
+                                            <i class="far fa-star" data-rating="2" onclick="setRating(2)"></i>
+                                            <i class="far fa-star" data-rating="3" onclick="setRating(3)"></i>
+                                            <i class="far fa-star" data-rating="4" onclick="setRating(4)"></i>
+                                            <i class="far fa-star" data-rating="5" onclick="setRating(5)"></i>
+                                        </div>
+                                        <input type="hidden" id="ratingValue" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Review Title</label>
+                                        <input type="text" id="reviewTitle" placeholder="Summarize your experience" required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Your Review</label>
+                                        <textarea id="reviewText" rows="4" placeholder="Share your experience with this product/service" required></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Add Photos (optional)</label>
+                                        <div class="photo-upload">
+                                            <input type="file" id="reviewPhotos" multiple accept="image/*">
+                                            <div class="upload-preview"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <button type="button" onclick="toggleReviewForm()" class="cancel-btn">Cancel</button>
+                                        <button type="submit" class="submit-btn">Post Review</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Reviews List -->
+                            <div class="community-reviews">
+                                <div class="reviews-filter">
+                                    <select onchange="filterCommunityReviews(this.value)">
+                                        <option value="recent">Most Recent</option>
+                                        <option value="rating-high">Highest Rated</option>
+                                        <option value="rating-low">Lowest Rated</option>
+                                        <option value="most-helpful">Most Helpful</option>
+                                    </select>
+                                </div>
+                                <div id="communityReviews" class="reviews-list">
+                                    <!-- Reviews will be dynamically added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-header">
+                <div class="business-info">
+                    <div class="business-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span>Chat with Business</span>
+                </div>
+                <div class="chat-controls">
+                    <button onclick="toggleChatSize()"><i class="fas fa-expand"></i></button>
+                    <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be dynamically added here -->
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type your message...">
+                <button><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Details Modal -->
+    <div id="productModal" class="modal product-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeProductModal()">&times;</span>
+            <div id="productDetails" class="product-details">
+                <!-- Product details will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <div class="dropdown">
+        <button class="dropdown-toggle" onclick="toggleDropdown()">
+            <i class="fas fa-user-circle"></i>
+            <span id="userStatus">Menu</span>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenu">
+            <div class="language-selector">
+                <select onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="fr">Français</option>
+                    <option value="de">Deutsch</option>
+                    <option value="zh">中文</option>
+                    <option value="hi">हिंदी</option>
+                </select>
+            </div>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" onclick="showSection('home')" data-translate="home">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a class="dropdown-item" onclick="showSection('search')" data-translate="search">
+                <i class="fas fa-search"></i> Search
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" id="loginButton" onclick="showSection('login')" data-translate="login">
+                <i class="fas fa-sign-in-alt"></i> Login/Register
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const tabs = document.querySelectorAll('.tab-btn');
+            
+            tabs.forEach(btn => btn.classList.remove('active'));
+            if (tab === 'login') {
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+                tabs[0].classList.add('active');
+            } else {
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+                tabs[1].classList.add('active');
+            }
+        }
+
+        function validateLogin(event) {
+            event.preventDefault();
+            const form = event.target;
+            const email = form.querySelector('input[type="email"]');
+            const password = form.querySelector('input[type="password"]');
+            
+            let isValid = true;
+            
+            if (!isValidEmail(email.value)) {
+                showError(email, true);
+                isValid = false;
+            } else {
+                showError(email, false);
+            }
+
+            if (password.value.length < 6) {
+                showError(password, true);
+                isValid = false;
+            } else {
+                showError(password, false);
+            }
+
+            if (isValid) {
+                // Store login state
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('userEmail', email.value);
+                
+                // Reset form
+                form.reset();
+                
+                // Update navigation
+                updateLoginButton(true);
+                
+                // Show home page
+                showSection('home');
+                
+                // Show success message
+                alert('Successfully logged in! You can now access all features.');
+            }
+        }
+
+        function validateSignup(event) {
+            event.preventDefault();
+            const form = event.target;
+            const name = form.querySelector('input[type="text"]');
+            const email = form.querySelector('input[type="email"]');
+            const password = form.querySelectorAll('input[type="password"]')[0];
+            const confirmPassword = form.querySelectorAll('input[type="password"]')[1];
+            
+            let isValid = true;
+
+            if (name.value.trim().length < 2) {
+                showError(name, true);
+                isValid = false;
+            } else {
+                showError(name, false);
+            }
+
+            if (!isValidEmail(email.value)) {
+                showError(email, true);
+                isValid = false;
+            } else {
+                showError(email, false);
+            }
+
+            if (password.value.length < 6) {
+                showError(password, true);
+                isValid = false;
+            } else {
+                showError(password, false);
+            }
+
+            if (password.value !== confirmPassword.value) {
+                showError(confirmPassword, true);
+                isValid = false;
+            } else {
+                showError(confirmPassword, false);
+            }
+
+            if (isValid) {
+                console.log('Signup successful');
+                form.reset();
+            }
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showError(input, show) {
+            const error = input.parentElement.querySelector('.error');
+            error.style.display = show ? 'block' : 'none';
+        }
+
+        const jobIcons = [
+            'fa-briefcase',
+            'fa-file-alt',
+            'fa-building',
+            'fa-handshake',
+            'fa-graduation-cap',
+            'fa-laptop',
+            'fa-chart-line',
+            'fa-users',
+            'fa-clipboard-check',
+            'fa-medal'
+        ];
+
+        function createFloatingIcon() {
+            const icon = document.createElement('i');
+            icon.className = `fas ${jobIcons[Math.floor(Math.random() * jobIcons.length)]} floating-item`;
+            icon.style.left = `${Math.random() * 100}%`;
+            icon.style.animationDuration = `${15 + Math.random() * 10}s`;
+            icon.style.fontSize = `${24 + Math.random() * 24}px`;
+            document.querySelector('.animated-background').appendChild(icon);
+
+            icon.addEventListener('animationend', () => {
+                icon.remove();
+            });
+        }
+
+        for (let i = 0; i < 15; i++) {
+            createFloatingIcon();
+        }
+
+        setInterval(createFloatingIcon, 2000);
+
+        function showPortal() {
+            document.querySelector('.container').style.display = 'none';
+            document.querySelector('.portal-container').style.display = 'block';
+            loadBusinesses();
+        }
+
+        function loadBusinesses() {
+            const businesses = [
+                {
+                    name: "Green Farm Fresh",
+                    category: "agriculture",
+                    image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800",
+                    rating: 4.5,
+                    location: "123 Rural District, Farmville",
+                    description: "Fresh organic produce directly from our farm",
+                    services: ["Organic Vegetables", "Fresh Fruits", "Farm Tours"],
+                    hours: "Mon-Sat: 8AM-6PM",
+                    priceRange: "$$"
+                },
+                {
+                    name: "City Plumbing Services",
+                    category: "services",
+                    image: "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=800",
+                    rating: 4.8,
+                    location: "456 Main Street, Downtown",
+                    description: "Professional plumbing services for home and business",
+                    services: ["Emergency Repairs", "Installation", "Maintenance"],
+                    hours: "24/7 Emergency Service",
+                    priceRange: "$$$"
+                },
+                {
+                    name: "Local Artisan Cafe",
+                    category: "food",
+                    image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800",
+                    rating: 4.6,
+                    location: "789 Arts District, Creative Quarter",
+                    description: "Artisanal coffee and homemade pastries",
+                    services: ["Coffee", "Pastries", "Breakfast", "Lunch"],
+                    hours: "Mon-Sun: 7AM-8PM",
+                    priceRange: "$$",
+                    coordinates: [-74.6, 40.3]
+                },
+                {
+                    name: "Handmade Crafts Store",
+                    category: "retail",
+                    image: "https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?w=800",
+                    rating: 4.3,
+                    location: "321 Craft Lane, Artisan Valley",
+                    description: "Local handmade crafts and artwork",
+                    services: ["Pottery", "Jewelry", "Home Decor"],
+                    hours: "Tue-Sun: 10AM-7PM",
+                    priceRange: "$$",
+                    coordinates: [-74.4, 40.4]
+                }
+            ];
+
+            renderBusinessCards(businesses);
+        }
+
+        function renderBusinessCards(businesses) {
+            const grid = document.querySelector('.business-grid');
+            grid.innerHTML = businesses.map(business => `
+                <div class="business-card">
+                    <div class="business-image" style="background-image: url(${business.image})"></div>
+                    <div class="business-info">
+                        <h3>${business.name}</h3>
+                        <div class="business-location">
+                            <i class="fas fa-map-marker-alt"></i> ${business.location}
+                        </div>
+                        <div class="business-meta">
+                            <span class="category"><i class="fas fa-tag"></i> ${business.category}</span>
+                            <span class="rating">
+                                ${"★".repeat(Math.floor(business.rating))}
+                                ${business.rating % 1 ? "½" : ""}
+                                (${business.rating})
+                            </span>
+                        </div>
+                        <div class="business-hours">
+                            <i class="far fa-clock"></i> ${business.hours}
+                        </div>
+                        <div class="price-range">
+                            ${business.priceRange}
+                        </div>
+                        <div class="business-services">
+                            ${business.services.map(service => `
+                                <span class="service-tag">${service}</span>
+                            `).join('')}
+                        </div>
+                        <p>${business.description}</p>
+                        <div class="business-actions">
+                            <button class="contact-btn" onclick="startChat('${business.name}')">
+                                <i class="fas fa-comments"></i> Chat
+                            </button>
+                            <button class="contact-btn" onclick="showBooking('${business.name}')">
+                                <i class="fas fa-calendar-alt"></i> Book
+                            </button>
+                            <button class="bookmark-btn">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function searchBusinesses(query) {
+            const businesses = getAllBusinesses(); // Get your business data
+            const filtered = businesses.filter(business => 
+                business.name.toLowerCase().includes(query.toLowerCase()) ||
+                business.description.toLowerCase().includes(query.toLowerCase()) ||
+                business.location.toLowerCase().includes(query.toLowerCase()) ||
+                business.services.some(service => 
+                    service.toLowerCase().includes(query.toLowerCase())
+                )
+            );
+            renderBusinessCards(filtered);
+        }
+
+        function applyFilters() {
+            const selectedCategory = document.getElementById('categoryFilter').value;
+            const selectedRating = document.getElementById('ratingFilter').value;
+            const selectedPrice = document.getElementById('priceFilter').value;
+            const selectedLocation = document.getElementById('locationFilter').value;
+            
+            const businesses = document.querySelectorAll('.business-card');
+            
+            businesses.forEach(business => {
+                const businessCategory = business.getAttribute('data-category');
+                const businessRating = parseFloat(business.getAttribute('data-rating'));
+                const businessPrice = business.getAttribute('data-price');
+                const businessLocation = business.getAttribute('data-location');
+                
+                let isVisible = true;
+                
+                if (selectedCategory && selectedCategory !== 'all') {
+                    isVisible = isVisible && businessCategory === selectedCategory;
+                }
+                
+                if (selectedRating && selectedRating !== 'all') {
+                    isVisible = isVisible && businessRating >= parseFloat(selectedRating);
+                }
+                
+                if (selectedPrice && selectedPrice !== 'all') {
+                    isVisible = isVisible && businessPrice === selectedPrice;
+                }
+                
+                if (selectedLocation && selectedLocation !== 'all') {
+                    isVisible = isVisible && businessLocation === selectedLocation;
+                }
+                
+                business.style.display = isVisible ? 'flex' : 'none';
+                
+                if (isVisible) {
+                    business.classList.add('fade-in');
+                    setTimeout(() => business.classList.remove('fade-in'), 300);
+                }
+            });
+            
+            updateResultsCount();
+        }
+
+        function getAllBusinesses() {
+            // Return your business data array
+            return [
+                // ... your business data ...
+            ];
+        }
+
+        function toggleChat() {
+            const chat = document.getElementById('chatContainer');
+            chat.style.display = chat.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function startChat(businessName) {
+            const chat = document.getElementById('chatContainer');
+            chat.style.display = 'block';
+            const messages = document.getElementById('chatMessages');
+            
+            // Clear previous messages
+            messages.innerHTML = '';
+            
+            // Update chat header
+            document.querySelector('.chat-header').innerHTML = `
+                <div class="business-info">
+                    <div class="business-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <span>${businessName}</span>
+                </div>
+                <button onclick="toggleChat()"><i class="fas fa-times"></i></button>
+            `;
+
+            // Add welcome message
+            addMessage('ai', `Hello! Welcome to ${businessName}. How can I assist you today?`);
+            
+            // Setup chat input
+            const input = document.querySelector('.chat-input input');
+            const sendBtn = document.querySelector('.chat-input button');
+            
+            // Clear and focus input
+            input.value = '';
+            input.focus();
+            
+            // Add event listeners for input and send button
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+            
+            input.addEventListener('input', function() {
+                sendBtn.disabled = !this.value.trim();
+            });
+            
+            sendBtn.addEventListener('click', sendMessage);
+            
+            // Function to handle sending messages
+            function sendMessage() {
+                const messageText = input.value.trim();
+                if (!messageText) return;
+                
+                // Add user message
+                addMessage('user', messageText);
+                input.value = '';
+                sendBtn.disabled = true;
+                
+                // Show typing indicator
+                const indicator = showTypingIndicator();
+                
+                // Generate and add AI response after a delay
+                setTimeout(async () => {
+                    indicator.remove();
+                    const response = await generateAIResponse(messageText, businessName);
+                    addMessage('ai', response);
+                }, 1000);
+            }
+        }
+
+        async function generateAIResponse(userMessage, businessName) {
+            const message = userMessage.toLowerCase().trim();
+            
+            // Business-specific responses based on category
+            const businessResponses = {
+                'plumbing': {
+                    services: ['Emergency Repairs', 'Installation', 'Maintenance'],
+                    pricing: '$80-150/hr',
+                    availability: '24/7 Emergency Service'
+                },
+                'electrical': {
+                    services: ['Wiring', 'Repairs', 'Installation'],
+                    pricing: '$75-120/hr',
+                    availability: '24/7 Emergency Service'
+                },
+                'tutoring': {
+                    services: ['One-on-one Sessions', 'Group Classes', 'Online Tutoring'],
+                    pricing: '$40-60/hr',
+                    availability: 'Flexible Hours'
+                },
+                'catering': {
+                    services: ['Events', 'Corporate', 'Private Parties'],
+                    pricing: 'Starting at $25/person',
+                    availability: 'Book in Advance'
+                }
+            };
+
+            // Determine business type from name
+            const businessType = Object.keys(businessResponses).find(type => 
+                businessName.toLowerCase().includes(type)) || 'general';
+
+            // Handle pricing inquiries
+            if (message.includes('price') || message.includes('cost') || message.includes('rate')) {
+                if (businessType !== 'general') {
+                    return `Our ${businessType} services are priced at ${businessResponses[businessType].pricing}. ` +
+                           `This includes ${businessResponses[businessType].services.join(', ')}. ` +
+                           `Would you like to schedule a service?`;
+                }
+                return `Our prices vary depending on the specific service needed. Could you please specify which service you're interested in?`;
+            }
+
+            // Handle availability/scheduling
+            if (message.includes('available') || message.includes('schedule') || message.includes('book')) {
+                if (businessType !== 'general') {
+                    return `We offer ${businessResponses[businessType].availability}. ` +
+                           `Would you like to schedule an appointment now?`;
+                }
+                return `We offer flexible scheduling to meet your needs. When would you like to schedule your appointment?`;
+            }
+
+            // Handle service inquiries
+            if (message.includes('service') || message.includes('what') || message.includes('help')) {
+                if (businessType !== 'general') {
+                    return `Our ${businessType} services include: ${businessResponses[businessType].services.join(', ')}. ` +
+                           `Which service interests you?`;
+                }
+                return `We offer a variety of professional services. Could you please specify what type of service you're looking for?`;
+            }
+
+            // Handle emergency requests
+            if (message.includes('emergency') || message.includes('urgent') || message.includes('asap')) {
+                if (businessType === 'plumbing' || businessType === 'electrical') {
+                    return `We provide 24/7 emergency services. Our team can be there within 1-2 hours. ` +
+                           `Would you like me to schedule an emergency service call right now?`;
+                }
+                return `While we don't offer emergency services, I can help you schedule the earliest available appointment. ` +
+                       `Would you like to check our availability?`;
+            }
+
+            // Handle discount inquiries
+            if (message.includes('discount') || message.includes('offer') || message.includes('deal')) {
+                return `We currently offer:\n` +
+                       `• 10% off for first-time customers\n` +
+                       `• Special rates for regular bookings\n` +
+                       `• Seasonal promotions\n` +
+                       `Would you like to know more about any of these offers?`;
+            }
+
+            // Handle location inquiries
+            if (message.includes('where') || message.includes('location') || message.includes('address')) {
+                return `We are located at:\n` +
+                       `123 Business Street\n` +
+                       `City, State 12345\n\n` +
+                       `Would you like directions or our service area details?`;
+            }
+
+            // Handle greetings
+            if (message.includes('hi') || message.includes('hello') || message.includes('hey')) {
+                return `Hello! How can I assist you today? We offer:\n` +
+                       `1. Service Information\n` +
+                       `2. Pricing Details\n` +
+                       `3. Booking & Scheduling\n` +
+                       `4. Special Offers\n` +
+                       `Just let me know what you're interested in!`;
+            }
+
+            // Handle thank you messages
+            if (message.includes('thank') || message.includes('thanks')) {
+                return `You're welcome! Is there anything else I can help you with?`;
+            }
+
+            // Handle complaints
+            if (message.includes('complaint') || message.includes('unhappy') || message.includes('issue')) {
+                return `I'm sorry to hear that you're having an issue. Would you like to:\n` +
+                       `1. Speak with a manager?\n` +
+                       `2. File a formal complaint?\n` +
+                       `3. Discuss a resolution?\n` +
+                       `Please let me know how I can help.`;
+            }
+
+            // Default response
+            return `How can I assist you today? I can help with:\n` +
+                   `• Service information\n` +
+                   `• Pricing details\n` +
+                   `• Scheduling appointments\n` +
+                   `• Special offers\n` +
+                   `Please let me know what you're interested in.`;
+        }
+
+        function showForum() {
+            document.querySelector('.business-grid').style.display = 'none';
+            document.querySelector('.forum-container').style.display = 'block';
+            loadForumPosts();
+        }
+
+        function loadForumPosts() {
+            // Sample forum posts
+            const posts = [
+                {
+                    author: "John Doe",
+                    date: "2024-01-20",
+                    content: "Looking for recommendations for local organic farms",
+                    likes: 5,
+                    comments: 3
+                },
+                // Add more sample posts
+            ];
+
+            const forum = document.querySelector('.forum-posts');
+            forum.innerHTML = posts.map(post => `
+                <div class="forum-post">
+                    <div class="post-header">
+                        <span class="post-author">${post.author}</span>
+                        <span class="post-date">${post.date}</span>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-actions">
+                        <button><i class="fas fa-thumbs-up"></i> ${post.likes}</button>
+                        <button><i class="fas fa-comment"></i> ${post.comments}</button>
+                        <button><i class="fas fa-share"></i> Share</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function logout() {
+            // Clear session storage
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('userEmail');
+            
+            // Update navigation
+            updateLoginButton(false);
+            
+            // Show home page
+            showSection('home');
+            
+            // Reset any active category filters
+            const pills = document.querySelectorAll('.category-pill');
+            pills.forEach(pill => pill.classList.remove('active'));
+            const allCategoriesPill = Array.from(pills).find(pill => 
+                pill.textContent.toLowerCase().includes('all'));
+            if (allCategoriesPill) {
+                allCategoriesPill.classList.add('active');
+            }
+            
+            // Clear search
+            const searchBox = document.querySelector('.search-box');
+            if (searchBox) {
+                searchBox.value = '';
+                searchRequirements('');
+            }
+        }
+
+        function showBooking(businessName) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="modal-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                    <h2>Book with ${businessName}</h2>
+                    <form class="booking-form" onsubmit="submitBooking(event, '${businessName}')">
+                        <input type="text" placeholder="Your Name" required>
+                        <input type="email" placeholder="Your Email" required>
+                        <input type="tel" placeholder="Phone Number" required>
+                        <input type="date" required>
+                        <select required>
+                            <option value="">Select Time</option>
+                            ${Array.from({length: 12}, (_, i) => i + 9).map(hour => `
+                                <option value="${hour}:00">${hour}:00 ${hour >= 12 ? 'PM' : 'AM'}</option>
+                            `)}
+                        </select>
+                        <select required>
+                            <option value="">Select Service</option>
+                            <option value="service1">General Inquiry</option>
+                            <option value="service2">Book Appointment</option>
+                            <option value="service3">Request Quote</option>
+                        </select>
+                        <textarea placeholder="Additional Notes or Requirements"></textarea>
+                        <button type="submit" class="booking-submit">Submit Booking</button>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function submitBooking(event, businessName) {
+            event.preventDefault();
+            const form = event.target;
+            // Here you would typically send the data to your server
+            alert(`Booking request sent to ${businessName}! We will contact you shortly.`);
+            form.parentElement.parentElement.remove();
+        }
+
+        // Add new functions for home page and search
+        function toggleNavMenu() {
+            const menuItems = document.getElementById('navMenuItems');
+            menuItems.classList.toggle('active');
+        }
+
+        function showSection(section) {
+            const homeContainer = document.getElementById('homeContainer');
+            const loginContainer = document.querySelector('.container');
+            const portalContainer = document.getElementById('portalContainer');
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+
+            // Hide all containers first
+            homeContainer.style.display = 'none';
+            loginContainer.style.display = 'none';
+            portalContainer.style.display = 'none';
+
+            switch(section) {
+                case 'home':
+                    homeContainer.style.display = 'block';
+                    updateLoginButton(isLoggedIn);
+                    break;
+                case 'login':
+                    if (isLoggedIn) {
+                        logout();
+                    } else {
+                        loginContainer.style.display = 'flex';
+                    }
+                    break;
+                case 'portal':
+                case 'search':
+                    if (!isLoggedIn) {
+                        alert('Please log in to access this feature.');
+                        loginContainer.style.display = 'flex';
+                        return;
+                    }
+                    portalContainer.style.display = 'block';
+                    loadBusinesses();
+                    break;
+            }
+
+            // Close navigation menu if open
+            const navMenuItems = document.getElementById('navMenuItems');
+            navMenuItems.classList.remove('active');
+        }
+
+        function filterByCategory(category) {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+            
+            if (!isLoggedIn && category !== 'all') {
+                alert('Please log in to access category filters.');
+                showSection('login');
+                return;
+            }
+
+            const pills = document.querySelectorAll('.category-pill');
+            pills.forEach(pill => {
+                pill.classList.remove('active');
+                if (pill.textContent.toLowerCase().includes(category)) {
+                    pill.classList.add('active');
+                }
+            });
+
+            const searchBox = document.querySelector('.search-box');
+            if (category === 'all') {
+                searchBox.value = '';
+                searchRequirements('');
+            } else {
+                searchBox.value = category;
+                searchRequirements(category);
+            }
+        }
+
+        function searchRequirements(query) {
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            loadingSpinner.style.display = 'block';
+
+            // Get active category filter
+            const activeCategoryPill = document.querySelector('.category-pill.active');
+            const categoryFilter = activeCategoryPill ? activeCategoryPill.textContent.toLowerCase() : 'all';
+
+            // Simulate loading delay
+            setTimeout(() => {
+                const requirements = [
+                    {
+                        category: "Home Services",
+                        icon: "fa-wrench",
+                        services: ["Plumbing", "Electrical Work", "Carpentry", "HVAC", "House Cleaning", "Pest Control"],
+                        description: "Professional home maintenance and repair services",
+                        rating: 4.8,
+                        reviews: 320,
+                        price: "$$",
+                        availability: "24/7 Emergency",
+                        response_time: "1-2 hours",
+                        discount: "10% off first service",
+                        products: [
+                            { name: "Emergency Plumbing", price: "$80/hr", specs: "24/7 Available", stock: "Available", discount: "15% off night calls" },
+                            { name: "Electrical Repair", price: "$75/hr", specs: "Licensed & Insured", stock: "Available", discount: "Senior citizen discount" },
+                            { name: "Emergency Plumbing", price: "$80/hr", specs: "24/7 Available", stock: "Available" },
+                            { name: "Electrical Repair", price: "$75/hr", specs: "Licensed & Insured", stock: "Available" },
+                            { name: "Home Cleaning", price: "$120", specs: "Full House Service", stock: "Available" }
+                        ]
+                    },
+                    {
+                        category: "Education",
+                        icon: "fa-graduation-cap",
+                        services: ["Private Tutoring", "Test Preparation", "Language Classes", "Music Lessons", "Art Classes", "Academic Help"],
+                        description: "Expert tutors and educational services for all ages",
+                        rating: 4.9,
+                        reviews: 245,
+                        price: "$$",
+                        availability: "Flexible Hours",
+                        response_time: "Same day",
+                        products: [
+                            { name: "Math Tutoring", price: "$45/hr", specs: "All Levels", stock: "Available" },
+                            { name: "SAT Prep Course", price: "$299", specs: "12 Sessions", stock: "Limited Spots" },
+                            { name: "Piano Lessons", price: "$50/hr", specs: "Beginner to Advanced", stock: "Available" }
+                        ]
+                    },
+                    {
+                        category: "Food & Catering",
+                        icon: "fa-utensils",
+                        services: ["Event Catering", "Personal Chef", "Meal Prep", "Wedding Catering", "Corporate Events", "Party Planning"],
+                        description: "Professional catering services for all occasions",
+                        rating: 4.7,
+                        reviews: 178,
+                        price: "$$$",
+                        availability: "Book in Advance",
+                        response_time: "Within 24hrs",
+                        products: [
+                            { name: "Wedding Package", price: "$35/person", specs: "Full Service", stock: "Available" },
+                            { name: "Corporate Lunch", price: "$20/person", specs: "Min. 20 people", stock: "Available" },
+                            { name: "Private Chef", price: "$150/hr", specs: "Custom Menu", stock: "Limited" }
+                        ]
+                    },
+                    {
+                        category: "Health & Wellness",
+                        icon: "fa-heart",
+                        services: ["Personal Training", "Yoga Classes", "Massage Therapy", "Nutrition Consulting", "Physical Therapy", "Mental Health"],
+                        description: "Professional health and wellness services",
+                        rating: 4.8,
+                        reviews: 290,
+                        price: "$$",
+                        availability: "Flexible Schedule",
+                        response_time: "Same day",
+                        products: [
+                            { name: "Personal Training", price: "$60/hr", specs: "Customized Program", stock: "Available" },
+                            { name: "Massage Therapy", price: "$80/hr", specs: "Various Styles", stock: "Available" },
+                            { name: "Nutrition Plan", price: "$199", specs: "3-Month Program", stock: "Available" }
+                        ]
+                    },
+                    {
+                        category: "Professional Services",
+                        icon: "fa-briefcase",
+                        services: ["Legal Consulting", "Tax Services", "Financial Planning", "Business Consulting", "Marketing", "Web Design"],
+                        description: "Expert professional services for individuals and businesses",
+                        rating: 4.9,
+                        reviews: 156,
+                        price: "$$$",
+                        availability: "By Appointment",
+                        response_time: "24 hours",
+                        products: [
+                            { name: "Legal Consultation", price: "$200/hr", specs: "Various Fields", stock: "Available" },
+                            { name: "Tax Preparation", price: "$299", specs: "Personal & Business", stock: "Available" },
+                            { name: "Business Plan", price: "$999", specs: "Complete Package", stock: "Available" }
+                        ]
+                    },
+                    {
+                        category: "Beauty & Spa",
+                        icon: "fa-spa",
+                        services: ["Hair Styling", "Makeup", "Nail Care", "Facial Treatment", "Spa Services", "Wedding Beauty"],
+                        description: "Complete beauty and spa services",
+                        rating: 4.7,
+                        reviews: 425,
+                        price: "$$",
+                        availability: "Daily Appointments",
+                        response_time: "2 hours",
+                        products: [
+                            { name: "Full Hair Service", price: "$80+", specs: "Cut, Color, Style", stock: "Available" },
+                            { name: "Bridal Package", price: "$350", specs: "Hair & Makeup", stock: "Book Early" },
+                            { name: "Spa Day Package", price: "$199", specs: "3 Services", stock: "Available" }
+                        ]
+                    }
+                ];
+
+                const grid = document.getElementById('requirementsGrid');
+                const filteredReqs = requirements.filter(req => 
+                    req.category.toLowerCase().includes(query.toLowerCase()) ||
+                    req.services.some(service => service.toLowerCase().includes(query.toLowerCase())) ||
+                    req.description.toLowerCase().includes(query.toLowerCase()) ||
+                    req.products.some(product => product.name.toLowerCase().includes(query.toLowerCase()))
+                );
+
+                grid.innerHTML = filteredReqs.map(req => `
+                    <div class="requirement-card" onclick="showRelatedBusinesses('${req.category}')">
+                        <i class="fas ${req.icon} fa-2x" style="margin-bottom: 1rem; color: #3498db;"></i>
+                        <h3>${highlightText(req.category, query)}</h3>
+                        <p>${highlightText(req.description, query)}</p>
+                        <div class="business-meta" style="margin: 1rem 0;">
+                            <span class="price-tag">${req.price}</span>
+                            <span class="availability">${req.availability}</span>
+                        </div>
+                        <div class="featured-products">
+                            <h4 style="margin: 1rem 0; color: #2c3e50;">Featured Products:</h4>
+                            ${req.products.map(product => `
+                                <div class="product-item" style="margin-bottom: 0.5rem; padding: 0.5rem; border: 1px solid #eee; border-radius: 8px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <strong>${highlightText(product.name, query)}</strong>
+                                        <span class="price-tag">${product.price}</span>
+                                    </div>
+                                    <div style="font-size: 0.9rem; color: #7f8c8d; margin-top: 0.3rem;">
+                                        ${product.specs} | Stock: ${product.stock}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="business-services">
+                            ${req.services.map(service => `
+                                <span class="service-tag">${highlightText(service, query)}</span>
+                            `).join('')}
+                        </div>
+                        <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="color: #f1c40f;">
+                                ${"★".repeat(Math.floor(req.rating))}${req.rating % 1 ? "½" : ""}
+                                <span style="color: #7f8c8d; margin-left: 5px;">${req.rating}</span>
+                            </div>
+                            <div style="color: #7f8c8d;">
+                                ${req.reviews} reviews
+                            </div>
+                        </div>
+                        <div style="margin-top: 0.5rem; color: #27ae60;">
+                            <i class="fas fa-clock"></i> Response time: ${req.response_time}
+                        </div>
+                    </div>
+                `).join('');
+
+                loadingSpinner.style.display = 'none';
+
+                // Add animation to cards
+                const cards = document.querySelectorAll('.requirement-card');
+                cards.forEach((card, index) => {
+                    card.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+                    card.style.opacity = '0';
+                });
+
+                // Show no results message if needed
+                if (filteredReqs.length === 0) {
+                    grid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                            <i class="fas fa-search" style="font-size: 3rem; color: #bdc3c7; margin-bottom: 1rem;"></i>
+                            <h3 style="color: #7f8c8d;">No results found for "${query}"</h3>
+                            <p style="color: #95a5a6;">Try different keywords or browse our categories</p>
+                        </div>
+                    `;
+                }
+            }, 500);
+        }
+
+        function showRelatedBusinesses(category) {
+            // Show loading animation
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            loadingSpinner.style.display = 'block';
+
+            // Simulate loading delay before transition
+            setTimeout(() => {
+                showSection('portal');
+                document.getElementById('categoryFilter').value = category.toLowerCase();
+                applyFilters();
+                loadingSpinner.style.display = 'none';
+            }, 800);
+        }
+
+        // Initialize the home page
+        window.onload = function() {
+            const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+            updateLoginButton(isLoggedIn);
+            showSection('home');
+        };
+
+        // Update the logo click handler in the portal header
+        document.querySelector('.logo-section').onclick = function(e) {
+            e.preventDefault();
+            showSection('home');
+            return false;
+        };
+
+        // Update the portal navigation buttons
+        const portalNav = document.querySelector('.portal-nav');
+        if (portalNav) {
+            const homeButton = portalNav.querySelector('button');
+            if (homeButton) {
+                homeButton.onclick = function() {
+                    showSection('home');
+                };
+            }
+        }
+
+        // Add highlight text function
+        function highlightText(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        // Add chat size toggle functionality
+        function toggleChatSize() {
+            const chat = document.getElementById('chatContainer');
+            chat.classList.toggle('expanded');
+            
+            const expandBtn = document.querySelector('.chat-controls button:first-child i');
+            if (chat.classList.contains('expanded')) {
+                expandBtn.classList.replace('fa-expand', 'fa-compress');
+                chat.style.width = '500px';
+                chat.style.height = '600px';
+            } else {
+                expandBtn.classList.replace('fa-compress', 'fa-expand');
+                chat.style.width = '350px';
+                chat.style.height = '500px';
+            }
+        }
+
+        function addMessage(type, content) {
+            const messages = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.innerHTML = `
+                <div class="message-content">${content}</div>
+                <span class="message-time">${time}</span>
+            `;
+            
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const messages = document.getElementById('chatMessages');
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator';
+            indicator.innerHTML = `
+                <div class="typing-dots">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                </div>
+            `;
+            messages.appendChild(indicator);
+            messages.scrollTop = messages.scrollHeight;
+            return indicator;
+        }
+
+        // Add language translations
+        const translations = {
+            en: {
+                home: "Home",
+                search: "Search",
+                login: "Login/Register",
+                services: "Services",
+                pricing: "Pricing",
+                contact: "Contact",
+                // Add more translations as needed
+            },
+            es: {
+                home: "Inicio",
+                search: "Buscar",
+                login: "Iniciar sesión/Registrarse",
+                services: "Servicios",
+                pricing: "Precios",
+                contact: "Contacto",
+            },
+            fr: {
+                home: "Accueil",
+                search: "Rechercher",
+                login: "Connexion/S'inscrire",
+                services: "Services",
+                pricing: "Tarifs",
+                contact: "Contact",
+            },
+            // Add more languages as needed
+        };
+
+        // Product database
+        const productDatabase = {
+            'Emergency Plumbing': {
+                name: 'Emergency Plumbing Service',
+                description: 'Professional emergency plumbing services available 24/7. Our expert plumbers handle all types of plumbing emergencies.',
+                price: '$80/hr',
+                images: [
+                    'https://images.unsplash.com/photo-1600566752355-35792bedcfea',
+                    'https://images.unsplash.com/photo-1583508915901-b5f84c1dcde1',
+                    'https://images.unsplash.com/photo-1581578731548-c64695cc6952'
+                ],
+                specs: {
+                    'Response Time': '30 minutes',
+                    'Service Area': 'Within 20 miles',
+                    'Warranty': '90 days',
+                    'Payment Methods': 'All major cards, cash',
+                    'Emergency Fee': 'Included in hourly rate'
+                },
+                related: ['Pipe Repair', 'Leak Detection', 'Drain Cleaning']
+            },
+            'Electrical Repair': {
+                name: 'Professional Electrical Repair',
+                description: 'Licensed and insured electrical repair services for residential and commercial properties.',
+                price: '$75/hr',
+                images: [
+                    'https://images.unsplash.com/photo-1621905251918-48416bd8575a',
+                    'https://images.unsplash.com/photo-1581092160562-40aa08e78837',
+                    'https://images.unsplash.com/photo-1555963966-b7ae5404b6ed'
+                ],
+                specs: {
+                    'Response Time': '1 hour',
+                    'Service Area': 'Metropolitan area',
+                    'Warranty': '1 year',
+                    'Certification': 'Licensed & Insured',
+                    'Emergency Service': 'Available'
+                },
+                related: ['Wiring Installation', 'Circuit Repair', 'Lighting Installation']
+            },
+            // Add more products as needed
+        };
+
+        function showProductDetails(productName) {
+            const product = productDatabase[productName];
+            if (!product) return;
+
+            const modal = document.getElementById('productModal');
+            const detailsContainer = document.getElementById('productDetails');
+
+            detailsContainer.innerHTML = `
+                <h2>${product.name}</h2>
+                <div class="product-gallery">
+                    ${product.images.map(img => `
+                        <img src="${img}" alt="${product.name}" class="product-image" onclick="showFullImage(this.src)">
+                    `).join('')}
+                </div>
+                <div class="product-info">
+                    <p>${product.description}</p>
+                    <div class="price-tag">${product.price}</div>
+                </div>
+                <div class="product-specs">
+                    <h3>Specifications</h3>
+                    ${Object.entries(product.specs).map(([key, value]) => `
+                        <div class="spec-item">
+                            <span>${key}</span>
+                            <span>${value}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="related-products">
+                    <h3>Related Services</h3>
+                    <div class="related-items">
+                        ${product.related.map(item => `
+                            <div class="related-item" onclick="showProductDetails('${item}')">
+                                <div>${item}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+
+        function showFullImage(src) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.9);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1001;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = src;
+            img.style.cssText = `
+                max-width: 90%;
+                max-height: 90vh;
+                object-fit: contain;
+            `;
+            
+            modal.appendChild(img);
+            modal.onclick = () => modal.remove();
+            document.body.appendChild(modal);
+        }
+
+        function changeLanguage(lang) {
+            const currentLang = translations[lang] || translations.en;
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-translate]').forEach(element => {
+                const key = element.getAttribute('data-translate');
+                if (currentLang[key]) {
+                    element.textContent = currentLang[key];
+                }
+            });
+        }
+
+        // Update the product item rendering in searchRequirements function
+        function renderProductItem(product, query) {
+            return `
+                <div class="product-item" onclick="showProductDetails('${product.name}')">
+                    <div class="product-header">
+                        <strong>${highlightText(product.name, query)}</strong>
+                        <span class="price-tag">${product.price}</span>
+                    </div>
+                    <div class="product-details">
+                        <span class="specs">${product.specs}</span>
+                        <span class="stock ${product.stock.toLowerCase()}">${product.stock}</span>
+                    </div>
+                    <div class="review-section">
+                        <div class="rating-dropdown">
+                            <button onclick="event.stopPropagation(); toggleReviewDropdown(this)" class="review-btn">
+                                <i class="fas fa-star"></i> Reviews
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="review-dropdown-content">
+                                <div class="rating-summary">
+                                    <div class="overall-rating">
+                                        <span class="rating-number">4.5</span>
+                                        <div class="stars">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star-half-alt"></i>
+                                        </div>
+                                        <span class="total-reviews">(128 reviews)</span>
+                                    </div>
+                                    <div class="rating-bars">
+                                        <div class="rating-bar">
+                                            <span>5</span>
+                                            <div class="bar-container">
+                                                <div class="bar" style="width: 70%"></div>
+                                            </div>
+                                            <span>70%</span>
+                                        </div>
+                                        <div class="rating-bar">
+                                            <span>4</span>
+                                            <div class="bar-container">
+                                                <div class="bar" style="width: 20%"></div>
+                                            </div>
+                                            <span>20%</span>
+                                        </div>
+                                        <div class="rating-bar">
+                                            <span>3</span>
+                                            <div class="bar-container">
+                                                <div class="bar" style="width: 7%"></div>
+                                            </div>
+                                            <span>7%</span>
+                                        </div>
+                                        <div class="rating-bar">
+                                            <span>2</span>
+                                            <div class="bar-container">
+                                                <div class="bar" style="width: 2%"></div>
+                                            </div>
+                                            <span>2%</span>
+                                        </div>
+                                        <div class="rating-bar">
+                                            <span>1</span>
+                                            <div class="bar-container">
+                                                <div class="bar" style="width: 1%"></div>
+                                            </div>
+                                            <span>1%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="recent-reviews">
+                                    <h4>Recent Reviews</h4>
+                                    <div class="review-item">
+                                        <div class="review-header">
+                                            <span class="reviewer">John D.</span>
+                                            <div class="stars">
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                                <i class="fas fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <p>Great service, very professional and prompt!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ${product.discount ? `
+                        <div class="product-discount">
+                            <i class="fas fa-tag"></i> ${product.discount}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Add the toggle function for review dropdown
+        function toggleReviewDropdown(button) {
+            const dropdown = button.nextElementSibling;
+            const allDropdowns = document.querySelectorAll('.review-dropdown-content');
+            
+            // Close all other dropdowns
+            allDropdowns.forEach(d => {
+                if (d !== dropdown) {
+                    d.classList.remove('show');
+                }
+            });
+            
+            // Toggle current dropdown
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.matches('.review-btn') && !event.target.closest('.review-dropdown-content')) {
+                document.querySelectorAll('.review-dropdown-content').forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                });
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function updateLoginButton(isLoggedIn) {
+            const loginButton = document.getElementById('loginButton');
+            const userStatus = document.getElementById('userStatus');
+            
+            if (isLoggedIn) {
+                loginButton.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+                loginButton.onclick = logout;
+                userStatus.textContent = sessionStorage.getItem('userEmail') || 'User';
+            } else {
+                loginButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login/Register';
+                loginButton.onclick = () => showSection('login');
+                userStatus.textContent = 'Menu';
+            }
+        }
+
+        function toggleDropdown() {
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            dropdownMenu.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.dropdown');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            
+            if (!dropdown.contains(event.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+
+        // Add function to reset filters
+        function resetFilters() {
+            document.getElementById('categoryFilter').value = 'all';
+            document.getElementById('ratingFilter').value = 'all';
+            document.getElementById('priceFilter').value = 'all';
+            document.getElementById('locationFilter').value = 'all';
+            
+            // Show all businesses
+            const businesses = document.querySelectorAll('.business-card');
+            businesses.forEach(business => {
+                business.style.display = 'flex';
+            });
+            
+            // Update results count
+            updateResultsCount();
+        }
+
+        // Add the review filtering functions
+        function filterReviews(event, filterType) {
+            event.stopPropagation();
+            const value = event.target.value;
+            const reviewsList = event.target.closest('.review-dropdown-content').querySelector('.review-list');
+            const reviewItems = reviewsList.querySelectorAll('.review-item');
+            let filteredCount = 0;
+
+            reviewItems.forEach(item => {
+                let show = true;
+                switch(filterType) {
+                    case 'rating':
+                        const rating = parseInt(item.getAttribute('data-rating'));
+                        show = value === 'all' || rating === parseInt(value);
+                        break;
+                    case 'date':
+                        const date = new Date(item.getAttribute('data-date'));
+                        const now = new Date();
+                        switch(value) {
+                            case 'recent':
+                                show = (now - date) <= 7 * 24 * 60 * 60 * 1000; // 7 days
+                                break;
+                            case 'month':
+                                show = (now - date) <= 30 * 24 * 60 * 60 * 1000;
+                                break;
+                            case '6months':
+                                show = (now - date) <= 180 * 24 * 60 * 60 * 1000;
+                                break;
+                            case 'year':
+                                show = (now - date) <= 365 * 24 * 60 * 60 * 1000;
+                                break;
+                        }
+                        break;
+                    case 'type':
+                        switch(value) {
+                            case 'verified':
+                                show = item.querySelector('.verified-badge') !== null;
+                                break;
+                            case 'photos':
+                                show = item.querySelector('.review-photos') !== null;
+                                break;
+                            case 'comments':
+                                show = item.querySelector('p').textContent.trim().length > 0;
+                                break;
+                        }
+                        break;
+                }
+                
+                if (show) {
+                    item.style.display = 'block';
+                    filteredCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            const countDisplay = event.target.closest('.review-dropdown-content').querySelector('#filteredCount');
+            countDisplay.textContent = filteredCount;
+        }
+
+        function resetReviewFilters(event) {
+            event.stopPropagation();
+            const dropdown = event.target.closest('.review-dropdown-content');
+            const filterSelects = dropdown.querySelectorAll('.filter-select');
+            const reviewItems = dropdown.querySelectorAll('.review-item');
+            const searchInput = dropdown.querySelector('.review-search');
+            
+            filterSelects.forEach(select => select.value = 'all');
+            searchInput.value = '';
+            reviewItems.forEach(item => item.style.display = 'block');
+            
+            const countDisplay = dropdown.querySelector('#filteredCount');
+            countDisplay.textContent = reviewItems.length;
+        }
+
+        function searchInReviews(event) {
+            event.stopPropagation();
+            const searchTerm = event.target.value.toLowerCase();
+            const reviewsList = event.target.closest('.review-dropdown-content').querySelector('.review-list');
+            const reviewItems = reviewsList.querySelectorAll('.review-item');
+            let filteredCount = 0;
+
+            reviewItems.forEach(item => {
+                const reviewText = item.querySelector('p').textContent.toLowerCase();
+                const reviewerName = item.querySelector('.reviewer').textContent.toLowerCase();
+                
+                if (reviewText.includes(searchTerm) || reviewerName.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    filteredCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            const countDisplay = event.target.closest('.review-dropdown-content').querySelector('#filteredCount');
+            countDisplay.textContent = filteredCount;
+        }
+
+        function handleReviewAction(event, action) {
+            event.stopPropagation();
+            const button = event.target.closest('button');
+            
+            if (action === 'helpful') {
+                const count = parseInt(button.textContent.match(/\d+/)[0]);
+                button.innerHTML = `<i class="fas fa-thumbs-up"></i> Helpful (${count + 1})`;
+                button.classList.add('active');
+            } else if (action === 'report') {
+                button.innerHTML = `<i class="fas fa-check"></i> Reported`;
+                button.classList.add('reported');
+                button.disabled = true;
+            }
+        }
+
+        function switchForumTab(tab) {
+            const tabs = document.querySelectorAll('.forum-tab');
+            const contents = document.querySelectorAll('.forum-tab-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            const activeTab = document.querySelector(`.forum-tab[onclick*="${tab}"]`);
+            const activeContent = document.getElementById(`${tab}Tab`);
+            
+            activeTab.classList.add('active');
+            activeContent.classList.add('active');
+        }
+
+        function toggleReviewForm() {
+            const form = document.getElementById('reviewForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function setRating(rating) {
+            const stars = document.querySelectorAll('.rating-input i');
+            const ratingInput = document.getElementById('ratingValue');
+            
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            });
+            
+            ratingInput.value = rating;
+        }
+
+        function submitReview(event) {
+            event.preventDefault();
+            
+            const review = {
+                product: document.getElementById('reviewProduct').value,
+                rating: document.getElementById('ratingValue').value,
+                title: document.getElementById('reviewTitle').value,
+                text: document.getElementById('reviewText').value,
+                date: new Date(),
+                author: 'Current User', // Replace with actual user name
+                helpful: 0,
+                photos: [] // Handle photo upload separately
+            };
+            
+            // Add review to the list
+            addReviewToList(review);
+            
+            // Clear form and hide it
+            event.target.reset();
+            setRating(0);
+            toggleReviewForm();
+        }
+
+        function addReviewToList(review) {
+            const reviewsList = document.getElementById('communityReviews');
+            const reviewElement = document.createElement('div');
+            reviewElement.className = 'community-review-item';
+            
+            reviewElement.innerHTML = `
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <span class="reviewer-name">${review.author}</span>
+                        <span class="review-date">${review.date.toLocaleDateString()}</span>
+                    </div>
+                    <div class="review-rating">
+                        ${generateStars(review.rating)}
+                    </div>
+                </div>
+                <h4 class="review-title">${review.title}</h4>
+                <p class="review-text">${review.text}</p>
+                ${review.photos.length ? generatePhotoGallery(review.photos) : ''}
+                <div class="review-actions">
+                    <button onclick="markHelpful(this)" class="helpful-btn">
+                        <i class="far fa-thumbs-up"></i> Helpful (${review.helpful})
+                    </button>
+                    <button onclick="reportReview(this)" class="report-btn">
+                        <i class="far fa-flag"></i> Report
+                    </button>
+                </div>
+            `;
+            
+            reviewsList.insertBefore(reviewElement, reviewsList.firstChild);
+        }
+
+        function generateStars(rating) {
+            return Array(5).fill(0).map((_, i) => 
+                `<i class="fas fa-star${i < rating ? '' : '-o'}" style="color: ${i < rating ? '#f1c40f' : '#bdc3c7'}"></i>`
+            ).join('');
+        }
+
+        function generatePhotoGallery(photos) {
+            return `
+                <div class="review-photos">
+                    ${photos.map(photo => `
+                        <img src="${photo}" alt="Review photo" onclick="showFullImage(this.src)">
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function markHelpful(button) {
+            const countSpan = button.querySelector('span');
+            const count = parseInt(countSpan.textContent) + 1;
+            countSpan.textContent = count;
+            button.classList.add('active');
+            button.disabled = true;
+        }
+
+        function reportReview(button) {
+            button.innerHTML = '<i class="fas fa-check"></i> Reported';
+            button.classList.add('reported');
+            button.disabled = true;
+        }
+
+        function filterCommunityReviews(filter) {
+            const reviews = Array.from(document.querySelectorAll('.community-review-item'));
+            
+            reviews.sort((a, b) => {
+                switch(filter) {
+                    case 'recent':
+                        return new Date(b.querySelector('.review-date').textContent) - 
+                               new Date(a.querySelector('.review-date').textContent);
+                    case 'rating-high':
+                        return b.querySelectorAll('.fa-star').length - 
+                               a.querySelectorAll('.fa-star').length;
+                    case 'rating-low':
+                        return a.querySelectorAll('.fa-star').length - 
+                               b.querySelectorAll('.fa-star').length;
+                    case 'most-helpful':
+                        return parseInt(b.querySelector('.helpful-btn').textContent.match(/\d+/)[0]) - 
+                               parseInt(a.querySelector('.helpful-btn').textContent.match(/\d+/)[0]);
+                }
+            });
+            
+            const container = document.getElementById('communityReviews');
+            reviews.forEach(review => container.appendChild(review));
+        }
+    </script>
+</body>
+</html>

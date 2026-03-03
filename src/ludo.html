@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Realistic Snake Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #1a1a1a;
+      font-family: Arial, sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    canvas {
+      border: 6px solid #444;
+      background: url('https://i.imgur.com/4NJlZ6K.png'); /* jungle bg example */
+      background-size: cover;
+    }
+
+    #score {
+      margin: 10px;
+      font-size: 22px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .btn {
+      background: #44ff44;
+      color: #000;
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      canvas {
+        width: 90vw;
+        height: 90vw;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Realistic Snake Game</h1>
+  <div id="score">Score: 0</div>
+  <canvas id="game" width="400" height="400"></canvas>
+
+  <div class="controls">
+    <button class="btn" onclick="changeDirection('up')">↑</button>
+    <div>
+      <button class="btn" onclick="changeDirection('left')">←</button>
+      <button class="btn" onclick="changeDirection('down')">↓</button>
+      <button class="btn" onclick="changeDirection('right')">→</button>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("game");
+    const ctx = canvas.getContext("2d");
+    const box = 20;
+    let score = 0;
+    let snake = [{ x: 5 * box, y: 5 * box }];
+    let direction = "right";
+
+    // 🐍 Replace these URLs with your generated images
+    const headImg = new Image();
+    headImg.src = "snake-head.png"; // replace with generated image URL
+
+    const bodyImg = new Image();
+    bodyImg.src = "snake-body.png"; // same as head for simplicity or use different
+
+    const appleImg = new Image();
+    appleImg.src = "apple.png"; // replace with generated image URL
+
+    let food = {
+      x: Math.floor(Math.random() * 20) * box,
+      y: Math.floor(Math.random() * 20) * box
+    };
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw snake
+      for (let i = 0; i < snake.length; i++) {
+        let s = snake[i];
+        ctx.drawImage(i === 0 ? headImg : bodyImg, s.x, s.y, box, box);
+      }
+
+      // Draw food
+      ctx.drawImage(appleImg, food.x, food.y, box, box);
+
+      // Movement logic
+      let headX = snake[0].x;
+      let headY = snake[0].y;
+
+      if (direction === "right") headX += box;
+      if (direction === "left") headX -= box;
+      if (direction === "up") headY -= box;
+      if (direction === "down") headY += box;
+
+      // Wall collision
+      if (
+        headX < 0 || headY < 0 ||
+        headX >= canvas.width || headY >= canvas.height
+      ) {
+        alert("Game Over! You hit the wall.");
+        document.location.reload();
+      }
+
+      // Self collision
+      for (let i = 1; i < snake.length; i++) {
+        if (headX === snake[i].x && headY === snake[i].y) {
+          alert("Game Over! You hit yourself.");
+          document.location.reload();
+        }
+      }
+
+      // Food eaten
+      if (headX === food.x && headY === food.y) {
+        score++;
+        document.getElementById("score").textContent = "Score: " + score;
+        food = {
+          x: Math.floor(Math.random() * 20) * box,
+          y: Math.floor(Math.random() * 20) * box
+        };
+      } else {
+        snake.pop();
+      }
+
+      const newHead = { x: headX, y: headY };
+      snake.unshift(newHead);
+    }
+
+    function changeDirection(dir) {
+      if (dir === "left" && direction !== "right") direction = "left";
+      if (dir === "right" && direction !== "left") direction = "right";
+      if (dir === "up" && direction !== "down") direction = "up";
+      if (dir === "down" && direction !== "up") direction = "down";
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowLeft") changeDirection("left");
+      if (e.key === "ArrowRight") changeDirection("right");
+      if (e.key === "ArrowUp") changeDirection("up");
+      if (e.key === "ArrowDown") changeDirection("down");
+    });
+
+    setInterval(draw, 150);
+  </script>
+</body>
+</html>
