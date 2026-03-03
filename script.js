@@ -56,236 +56,364 @@ const typed = new Typed('.multiple-text', {
   loop: true
 });
 
-// Chart.js Configuration
-const chartColor = {
-    primary: '#0ef',
-    secondary: '#ff6b6b',
-    success: '#51cf66',
-    warning: '#ffd93d',
-    danger: '#ff6348',
-    info: '#4ecdc4'
-};
+// Chart.js Configuration for Bar Charts
+Chart.defaults.font.family = "'Poppins', sans-serif";
 
-// Plugin to display percentages on charts
-const percentagePlugin = {
-    id: 'percentagePlugin',
-    afterDatasetsDraw(chart) {
-        const { ctx, data, chartArea: { left, top, width, height } } = chart;
-        ctx.save();
-        
-        data.datasets.forEach((dataset, datasetIndex) => {
-            const { x: centerX, y: centerY } = chart.getDatasetMeta(datasetIndex).data[0];
-            const total = dataset.data.reduce((a, b) => a + b, 0);
-            
-            dataset.data.forEach((value, index) => {
-                const meta = chart.getDatasetMeta(datasetIndex);
-                const arc = meta.data[index];
-                const angle = (arc.startAngle + arc.endAngle) / 2;
-                
-                const radius = (arc.outerRadius + arc.innerRadius) / 2;
-                const x = centerX + Math.cos(angle - Math.PI / 2) * radius;
-                const y = centerY + Math.sin(angle - Math.PI / 2) * radius;
-                
-                const percentage = ((value / total) * 100).toFixed(0);
-                
-                ctx.fillStyle = '#fff';
-                ctx.font = '600 14px poppins';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(percentage + '%', x, y);
-            });
-        });
-        ctx.restore();
-    }
-};
-
-// Python Chart
+// Python Bar Chart
 const pythonCtx = document.getElementById('pythonChart').getContext('2d');
 new Chart(pythonCtx, {
-    type: 'doughnut',
+    type: 'bar',
     data: {
-        labels: ['Expert', 'Proficient', 'Learning'],
+        labels: ['Python'],
         datasets: [{
-            data: [65, 25, 10],
-            backgroundColor: ['#0ef', '#ff6b6b', '#51cf66'],
-            borderColor: ['#1f242d', '#1f242d', '#1f242d'],
-            borderWidth: 3
+            label: 'Proficiency',
+            data: [72],
+            backgroundColor: ['#0ef'],
+            borderColor: ['#0ef'],
+            borderWidth: 2,
+            borderRadius: 5
         }]
     },
     options: {
+        indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            percentagePlugin: true,
-            legend: {
-                position: 'bottom',
-                labels: {
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
                     color: '#fff',
-                    font: { size: 12 },
-                    padding: 15
+                    font: { size: 12, weight: 'bold' },
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#fff',
+                    font: { size: 12 }
+                },
+                grid: {
+                    display: false
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.parsed.x + '%';
+                    }
                 }
             }
         }
-    },
-    plugins: [percentagePlugin]
+    }
 });
 
-// JavaScript Chart
+// JavaScript Bar Chart
 const jsCtx = document.getElementById('javascriptChart').getContext('2d');
 new Chart(jsCtx, {
-    type: 'doughnut',
+    type: 'bar',
     data: {
-        labels: ['Expert', 'Proficient', 'Learning'],
+        labels: ['JavaScript'],
         datasets: [{
-            data: [75, 20, 5],
-            backgroundColor: ['#ffd93d', '#ff6b6b', '#51cf66'],
-            borderColor: ['#1f242d', '#1f242d', '#1f242d'],
-            borderWidth: 3
+            label: 'Proficiency',
+            data: [75],
+            backgroundColor: ['#ffd93d'],
+            borderColor: ['#ffd93d'],
+            borderWidth: 2,
+            borderRadius: 5
         }]
     },
     options: {
+        indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            percentagePlugin: true,
-            legend: {
-                position: 'bottom',
-                labels: {
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
                     color: '#fff',
-                    font: { size: 12 },
-                    padding: 15
+                    font: { size: 12, weight: 'bold' },
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#fff',
+                    font: { size: 12 }
+                },
+                grid: {
+                    display: false
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.parsed.x + '%';
+                    }
                 }
             }
         }
-    },
-    plugins: [percentagePlugin]
+    }
 });
 
-// HTML & CSS Chart
+// HTML & CSS Bar Chart
 const htmlcssCtx = document.getElementById('htmlcssChart').getContext('2d');
 new Chart(htmlcssCtx, {
-    type: 'doughnut',
+    type: 'bar',
     data: {
-        labels: ['Expert', 'Proficient', 'Learning'],
+        labels: ['HTML & CSS'],
         datasets: [{
-            data: [80, 15, 5],
-            backgroundColor: ['#51cf66', '#ff6b6b', '#ffd93d'],
-            borderColor: ['#1f242d', '#1f242d', '#1f242d'],
-            borderWidth: 3
+            label: 'Proficiency',
+            data: [70],
+            backgroundColor: ['#51cf66'],
+            borderColor: ['#51cf66'],
+            borderWidth: 2,
+            borderRadius: 5
         }]
     },
     options: {
+        indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            percentagePlugin: true,
-            legend: {
-                position: 'bottom',
-                labels: {
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
                     color: '#fff',
-                    font: { size: 12 },
-                    padding: 15
+                    font: { size: 12, weight: 'bold' },
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#fff',
+                    font: { size: 12 }
+                },
+                grid: {
+                    display: false
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.parsed.x + '%';
+                    }
                 }
             }
         }
-    },
-    plugins: [percentagePlugin]
+    }
 });
 
-// React Chart
+// React Bar Chart
 const reactCtx = document.getElementById('reactChart').getContext('2d');
 new Chart(reactCtx, {
-    type: 'doughnut',
+    type: 'bar',
     data: {
-        labels: ['Intermediate', 'Proficient', 'Basic'],
+        labels: ['React'],
         datasets: [{
-            data: [50, 35, 15],
-            backgroundColor: ['#4ecdc4', '#ff6b6b', '#ffd93d'],
-            borderColor: ['#1f242d', '#1f242d', '#1f242d'],
-            borderWidth: 3
+            label: 'Proficiency',
+            data: [68],
+            backgroundColor: ['#4ecdc4'],
+            borderColor: ['#4ecdc4'],
+            borderWidth: 2,
+            borderRadius: 5
         }]
     },
     options: {
+        indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            percentagePlugin: true,
-            legend: {
-                position: 'bottom',
-                labels: {
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
                     color: '#fff',
-                    font: { size: 12 },
-                    padding: 15
+                    font: { size: 12, weight: 'bold' },
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#fff',
+                    font: { size: 12 }
+                },
+                grid: {
+                    display: false
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.parsed.x + '%';
+                    }
                 }
             }
         }
-    },
-    plugins: [percentagePlugin]
+    }
 });
 
-// Web Development Chart
+// Web Development Bar Chart
 const webdevCtx = document.getElementById('webdevChart').getContext('2d');
 new Chart(webdevCtx, {
-    type: 'doughnut',
+    type: 'bar',
     data: {
-        labels: ['Frontend', 'Backend', 'Full Stack'],
+        labels: ['Web Development'],
         datasets: [{
-            data: [70, 40, 30],
-            backgroundColor: ['#0ef', '#ff6b6b', '#51cf66'],
-            borderColor: ['#1f242d', '#1f242d', '#1f242d'],
-            borderWidth: 3
+            label: 'Proficiency',
+            data: [73],
+            backgroundColor: ['#ff6b6b'],
+            borderColor: ['#ff6b6b'],
+            borderWidth: 2,
+            borderRadius: 5
         }]
     },
     options: {
+        indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            percentagePlugin: true,
-            legend: {
-                position: 'bottom',
-                labels: {
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
                     color: '#fff',
-                    font: { size: 12 },
-                    padding: 15
+                    font: { size: 12, weight: 'bold' },
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#fff',
+                    font: { size: 12 }
+                },
+                grid: {
+                    display: false
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.parsed.x + '%';
+                    }
                 }
             }
         }
-    },
-    plugins: [percentagePlugin]
+    }
 });
 
-// UI/UX Design Chart
+// UI/UX Design Bar Chart
 const designCtx = document.getElementById('designChart').getContext('2d');
 new Chart(designCtx, {
-    type: 'doughnut',
+    type: 'bar',
     data: {
-        labels: ['Design', 'Prototyping', 'User Research'],
+        labels: ['UI/UX Design'],
         datasets: [{
-            data: [55, 30, 15],
-            backgroundColor: ['#ffd93d', '#51cf66', '#0ef'],
-            borderColor: ['#1f242d', '#1f242d', '#1f242d'],
-            borderWidth: 3
+            label: 'Proficiency',
+            data: [65],
+            backgroundColor: ['#a78bfa'],
+            borderColor: ['#a78bfa'],
+            borderWidth: 2,
+            borderRadius: 5
         }]
     },
     options: {
+        indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-            percentagePlugin: true,
-            legend: {
-                position: 'bottom',
-                labels: {
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
                     color: '#fff',
-                    font: { size: 12 },
-                    padding: 15
+                    font: { size: 12, weight: 'bold' },
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#fff',
+                    font: { size: 12 }
+                },
+                grid: {
+                    display: false
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return context.parsed.x + '%';
+                    }
                 }
             }
         }
-    },
-    plugins: [percentagePlugin]
+    }
 });
 
-ScrollReveal().reveal('.skill-chart', { origin: 'bottom', interval: 100 });
+ScrollReveal().reveal('.skill-item', { origin: 'bottom', interval: 100 });
 
 // Modal Functions
 function openModal(modalId) {
