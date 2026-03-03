@@ -65,7 +65,7 @@ const dataLabelPlugin = {
     afterDatasetsDraw(chart) {
         const { ctx } = chart;
         ctx.font = 'bold 16px Poppins';
-        ctx.fillStyle = '#0ef';
+        ctx.fillStyle = '#fff';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
         
