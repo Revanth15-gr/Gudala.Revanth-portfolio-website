@@ -1,0 +1,16 @@
+{
+  "name": "revanth-portfolio",
+  "version": "1.0.0",
+  "description": "Portfolio website of Gudala Revanth",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000 -c-1",
+    "dev": "http-server -p 8000 -c-1"
+  },
+  "keywords": ["portfolio", "frontend", "web-development"],
+  "author": "Gudala Revanth",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

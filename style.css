@@ -233,6 +233,63 @@ margin-bottom: 5rem;
     margin: 1rem 0 3rem;
 }
 
+/* Skills Section */
+.skills{
+    background: var(--bg-color);
+}
+
+.skills h2{
+    margin-bottom: 5rem;
+}
+
+.skills-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+    gap: 3rem;
+    align-items: center;
+    justify-items: center;
+}
+
+.skill-chart{
+    width: 100%;
+    max-width: 28rem;
+    background: var(--second-bg-color);
+    padding: 2.5rem;
+    border-radius: 2rem;
+    text-align: center;
+    border: .2rem solid var(--bg-color);
+    transition: .5s ease;
+    box-shadow: 0 0 1rem rgba(0,0,0,.5);
+}
+
+.skill-chart:hover{
+    border-color: var(--main-color);
+    transform: translateY(-1rem);
+    box-shadow: 0 0 2rem var(--main-color);
+}
+
+.chart-wrapper{
+    position: relative;
+    width: 20rem;
+    height: 20rem;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-wrapper canvas{
+    max-width: 100%;
+    height: auto;
+}
+
+.skill-chart h3{
+    font-size: 2.2rem;
+    color: var(--main-color);
+    font-weight: 600;
+    margin-top: 1.5rem;
+}
+
 .portfolio{
  background-color: var(--second-bg-color);
 }
@@ -470,6 +527,20 @@ margin-bottom: 5rem;
   .services-container {
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  .skills-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .skill-chart {
+    max-width: 100%;
+  }
+
+  .chart-wrapper {
+    width: 18rem;
+    height: 18rem;
   }
 
   .portfolio-container {
