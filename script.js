@@ -66,6 +66,39 @@ const chartColor = {
     info: '#4ecdc4'
 };
 
+// Plugin to display percentages on charts
+const percentagePlugin = {
+    id: 'percentagePlugin',
+    afterDatasetsDraw(chart) {
+        const { ctx, data, chartArea: { left, top, width, height } } = chart;
+        ctx.save();
+        
+        data.datasets.forEach((dataset, datasetIndex) => {
+            const { x: centerX, y: centerY } = chart.getDatasetMeta(datasetIndex).data[0];
+            const total = dataset.data.reduce((a, b) => a + b, 0);
+            
+            dataset.data.forEach((value, index) => {
+                const meta = chart.getDatasetMeta(datasetIndex);
+                const arc = meta.data[index];
+                const angle = (arc.startAngle + arc.endAngle) / 2;
+                
+                const radius = (arc.outerRadius + arc.innerRadius) / 2;
+                const x = centerX + Math.cos(angle - Math.PI / 2) * radius;
+                const y = centerY + Math.sin(angle - Math.PI / 2) * radius;
+                
+                const percentage = ((value / total) * 100).toFixed(0);
+                
+                ctx.fillStyle = '#fff';
+                ctx.font = '600 14px poppins';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(percentage + '%', x, y);
+            });
+        });
+        ctx.restore();
+    }
+};
+
 // Python Chart
 const pythonCtx = document.getElementById('pythonChart').getContext('2d');
 new Chart(pythonCtx, {
@@ -83,6 +116,7 @@ new Chart(pythonCtx, {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
+            percentagePlugin: true,
             legend: {
                 position: 'bottom',
                 labels: {
@@ -92,7 +126,8 @@ new Chart(pythonCtx, {
                 }
             }
         }
-    }
+    },
+    plugins: [percentagePlugin]
 });
 
 // JavaScript Chart
@@ -112,6 +147,7 @@ new Chart(jsCtx, {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
+            percentagePlugin: true,
             legend: {
                 position: 'bottom',
                 labels: {
@@ -121,7 +157,8 @@ new Chart(jsCtx, {
                 }
             }
         }
-    }
+    },
+    plugins: [percentagePlugin]
 });
 
 // HTML & CSS Chart
@@ -141,6 +178,7 @@ new Chart(htmlcssCtx, {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
+            percentagePlugin: true,
             legend: {
                 position: 'bottom',
                 labels: {
@@ -150,7 +188,8 @@ new Chart(htmlcssCtx, {
                 }
             }
         }
-    }
+    },
+    plugins: [percentagePlugin]
 });
 
 // React Chart
@@ -170,6 +209,7 @@ new Chart(reactCtx, {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
+            percentagePlugin: true,
             legend: {
                 position: 'bottom',
                 labels: {
@@ -179,7 +219,8 @@ new Chart(reactCtx, {
                 }
             }
         }
-    }
+    },
+    plugins: [percentagePlugin]
 });
 
 // Web Development Chart
@@ -199,6 +240,7 @@ new Chart(webdevCtx, {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
+            percentagePlugin: true,
             legend: {
                 position: 'bottom',
                 labels: {
@@ -208,7 +250,8 @@ new Chart(webdevCtx, {
                 }
             }
         }
-    }
+    },
+    plugins: [percentagePlugin]
 });
 
 // UI/UX Design Chart
@@ -228,6 +271,7 @@ new Chart(designCtx, {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
+            percentagePlugin: true,
             legend: {
                 position: 'bottom',
                 labels: {
@@ -237,7 +281,46 @@ new Chart(designCtx, {
                 }
             }
         }
-    }
+    },
+    plugins: [percentagePlugin]
 });
 
 ScrollReveal().reveal('.skill-chart', { origin: 'bottom', interval: 100 });
+
+// Modal Functions
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+}
+
+// Close modal when pressing Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (modal.style.display === 'block') {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+});

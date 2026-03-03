@@ -60,7 +60,7 @@
             <h2 class="heading">About <span>Me</span></h2>
             <h3>Frontend Developer</h3>
             <p>  I'm Gudala Revanth, a B.Tech student and aspiring Frontend Developer with a strong interest in building modern, responsive websites. I enjoy combining design and code to create clean, user-friendly interfaces. While I'm still learning, I'm constantly exploring web technologies like HTML, CSS, JavaScript, and frameworks to sharpen my skills. I believe in continuous growth and love working on real-world projects that challenge and inspire me.</p>
-            <a href="" class="btn"> Read More</a>
+            <a href="javascript:void(0)" class="btn" onclick="openModal('aboutModal')"> Read More</a>
         </div>
     </section>
 
@@ -72,19 +72,19 @@
                 
                 <h3>Visual Designer</h3>
                 <p>I craft visually appealing designs that enhance user experience and brand identity. From layout to color theory, I focus on making interfaces intuitive and aesthetically engaging.</p>
-                <a href="#" class="btn">Read More</a>
+                <a href="javascript:void(0)" class="btn" onclick="openModal('designerModal')">Read More</a>
             </div>
             <div class="services-box">
                 <i class="fa-solid fa-code"></i>
                 <h3>Web Development</h3>
                 <p>I build responsive and interactive websites using HTML, CSS, JavaScript, and modern frontend tools. My goal is to turn your ideas into clean, functional, and fast-loading web experiences.</p>
-                <a href="#" class="btn">Read More</a>
+                <a href="javascript:void(0)" class="btn" onclick="openModal('webdevModal')">Read More</a>
             </div>
             <div class="services-box">
                 <i class="fa-solid fa-chart-simple"></i>
                 <h3>Digital Marketing </h3>
                 <p>I help boost your online presence through SEO strategies, content creation, and social media optimization. My focus is on driving traffic and improving engagement with data-driven approaches.</p>
-                <a href="#" class="btn">Read More</a>
+                <a href="javascript:void(0)" class="btn" onclick="openModal('marketingModal')">Read More</a>
             </div>
         </div>
     </section>
@@ -209,6 +209,7 @@
         </div>
     </div>
 </section>
+
 <section class="contact" id="contact">
     <h2 class="heading">Contacts <span>Me!</span></h2>
 
@@ -225,6 +226,79 @@
         <input type="submit" value="Send Message" class="btn">
     </form>
 </section>
+
+<!-- Modals -->
+<div id="aboutModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('aboutModal')">&times;</span>
+        <h2>More About Me</h2>
+        <p>I'm Gudala Revanth, a passionate B.Tech student and aspiring Full Stack Developer based in India. With a keen interest in web development, I focus on creating user-centric digital experiences.</p>
+        <h4>Technical Skills:</h4>
+        <ul>
+            <li>Frontend: HTML, CSS, JavaScript, React</li>
+            <li>Backend: Python, Node.js</li>
+            <li>Tools: Git, VS Code, Figma</li>
+            <li>Soft Skills: Problem-solving, Team collaboration, Communication</li>
+        </ul>
+        <h4>Education:</h4>
+        <p>B.Tech in Computer Science - Currently pursuing</p>
+        <h4>Interests:</h4>
+        <p>Building interactive web applications, UI/UX Design, Digital Marketing, Open-source contributions</p>
+    </div>
+</div>
+
+<div id="designerModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('designerModal')">&times;</span>
+        <h2>Visual Designer Services</h2>
+        <h4>What I Offer:</h4>
+        <ul>
+            <li><strong>UI Design:</strong> Create beautiful and intuitive user interfaces following modern design principles</li>
+            <li><strong>Brand Identity:</strong> Develop cohesive visual branding including logos and color schemes</li>
+            <li><strong>Wireframing:</strong> Plan user flows and page layouts for optimal user experience</li>
+            <li><strong>Design Systems:</strong> Build reusable component libraries for consistency</li>
+            <li><strong>Mockups & Prototypes:</strong> Create interactive prototypes using Figma and other tools</li>
+        </ul>
+        <h4>My Design Philosophy:</h4>
+        <p>Every design should be both beautiful and functional. I believe in user-centered design that puts the user's needs first while maintaining aesthetic appeal.</p>
+    </div>
+</div>
+
+<div id="webdevModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('webdevModal')">&times;</span>
+        <h2>Web Development Services</h2>
+        <h4>What I Deliver:</h4>
+        <ul>
+            <li><strong>Responsive Websites:</strong> Mobile-first, fully responsive sites that work on all devices</li>
+            <li><strong>Interactive Web Apps:</strong> Dynamic applications using JavaScript and React</li>
+            <li><strong>Performance Optimization:</strong> Fast-loading websites with optimized assets</li>
+            <li><strong>SEO-Friendly Code:</strong> Semantic HTML and best practices for search engine visibility</li>
+            <li><strong>Maintenance & Support:</strong> Ongoing updates and technical support</li>
+        </ul>
+        <h4>Tech Stack:</h4>
+        <p>HTML5, CSS3, JavaScript (ES6+), React, MySQL, Node.js</p>
+        <h4>My Approach:</h4>
+        <p>I focus on writing clean, maintainable code and delivering projects on time with excellent communication throughout the process.</p>
+    </div>
+</div>
+
+<div id="marketingModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('marketingModal')">&times;</span>
+        <h2>Digital Marketing Services</h2>
+        <h4>Services Include:</h4>
+        <ul>
+            <li><strong>SEO Optimization:</strong> Improve search rankings and organic traffic through keyword research and on-page optimization</li>
+            <li><strong>Content Strategy:</strong> Create engaging content that drives conversions and builds brand authority</li>
+            <li><strong>Social Media Management:</strong> Grow your audience with strategic posting and community engagement</li>
+            <li><strong>Analytics & Reporting:</strong> Track performance with detailed reports and actionable insights</li>
+            <li><strong>Email Marketing:</strong> Build targeted campaigns that convert leads into customers</li>
+        </ul>
+        <h4>Results-Driven Approach:</h4>
+        <p>Every campaign is data-driven and focused on ROI. I use analytics tools to measure success and continuously optimize based on real performance metrics.</p>
+    </div>
+</div>
 
 <footer class="footer">
     <div class="footer-text">
